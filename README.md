@@ -33,8 +33,9 @@ Enseñar y reforzar los **fundamentos de la lógica de programación** de manera
 ---
 
 ## 🛠️ Stack Tecnológico
-- **Motor:** Unity 3D (Unity 6 / URP 17.5.0)
-- **Lenguaje Principal:** C# (.NET Standard / Unity Engine API)
+- **Motor de Videojuego:** Unity 3D (Unity 6 / URP 17.5.0)
+- **Lenguaje de Desarrollo del Juego:** C# (.NET Standard / Unity Engine API)
+- **Lenguaje Educativo del Jugador (Terminal de Caja):** **Python** (sintaxis didáctica: `print()`, variables, operaciones, `if/elif/else`)
 - **Interfaz de Usuario:** Unity UI / TextMesh Pro
 - **Herramientas de Asistencia y Desarrollo:** Google Antigravity + Unity MCP
 - **Control de Versiones:** Git / GitHub

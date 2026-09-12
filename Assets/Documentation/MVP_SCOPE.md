@@ -17,9 +17,9 @@ El Minimum Viable Product (MVP) consiste en un corte vertical funcional y enfoca
    - Botón interactivo "Ejecutar / Validar".
 3. **Reto Inicial (Nivel 1):**
    - Reto de salida: Imprimir mensaje en el display (ejemplo: `print("Bienvenido")` o equivalente definido para el nivel).
-4. **Sistema de Validación Determinística en C#:**
-   - Módulo validador modular que compara el input del jugador con patrones y respuestas válidas aceptadas (eliminando espacios redundantes y contemplando variantes controladas).
-   - **Cero código arbitrario:** No se ejecuta C# dinámico por razones de seguridad, estabilidad y simplicidad arquitectónica.
+4. **Sistema de Validación Determinística en C# (Simulador Didáctico de Python):**
+   - Módulo validador modular programado en C# que analiza el input en sintaxis Python del jugador contra patrones y respuestas válidas aceptadas (eliminando espacios redundantes y contemplando variantes entre comillas simples/dobles, etc.).
+   - **Cero código arbitrario:** No se ejecuta código dinámico ni intérpretes externos por razones de seguridad, estabilidad y simplicidad arquitectónica.
 5. **Ciclo de Feedback:**
    - Feedback de éxito: Mensaje positivo en terminal + luz de terminal en verde + sonido de caja registradora o avance del cliente placeholder.
    - Feedback de error: Mensaje explicativo del fallo + botón/pista contextual accesible.
@@ -32,4 +32,4 @@ El Minimum Viable Product (MVP) consiste en un corte vertical funcional y enfoca
 - Sistema de inventario persistente o economía profunda.
 - IA compleja de peatones o tráfico exterior.
 - Modos multijugador o servicios backend online.
-- Compilación de C# en tiempo de ejecución (Roslyn o evaluadores dinámicos no controlados).
+- Intérpretes dinámicos o ejecución de código arbitrario no controlado en runtime.

@@ -28,9 +28,9 @@
 
 ---
 
-## 3. Plan de Progresión Curricular
-1. **Nivel 1: Salida de Datos (`print / Console.WriteLine`)**
-   - Reto: Mostrar mensaje de bienvenida al cliente en el display ("Irasshaimase / Bienvenido").
+## 3. Plan de Progresión Curricular (Enfoque Python Didáctico)
+1. **Nivel 1: Salida de Datos (`print("...")`)**
+   - Reto: Mostrar mensaje de bienvenida al cliente en la terminal (`print("Bienvenido")` / `print("Irasshaimase")`).
 2. **Nivel 2: Variables y Tipos Básicos**
    - Reto: Asignar nombre del cajero, nombre del producto (`string`) y precio (`int`/`float`).
 3. **Nivel 3: Operaciones Aritméticas**
