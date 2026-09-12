@@ -61,3 +61,8 @@ ehthumbs.db
 
 # Keep .meta files for empty directories
 !*.meta
+
+# Local dev screenshots
+/[Aa]ssets/[Ss]creenshots/
+/[Aa]ssets/[Ss]creenshots.meta
+
