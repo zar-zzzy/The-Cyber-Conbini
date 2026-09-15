@@ -1,0 +1,21 @@
+{
+  "name": "CyberConbini.EditModeTests",
+  "rootNamespace": "CyberConbini.Tests.EditMode",
+  "references": [
+    "CyberConbini.Runtime"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false,
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ]
+}

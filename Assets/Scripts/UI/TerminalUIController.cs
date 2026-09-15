@@ -11,6 +11,8 @@ namespace CyberConbini.UI
     /// </summary>
     public class TerminalUIController : MonoBehaviour
     {
+        private static readonly int EmissionColorPropertyId = Shader.PropertyToID("_EmissionColor");
+
         [Header("Referencias de UI")]
         [Tooltip("Campo de texto donde el jugador introduce su código Python")]
         [SerializeField] private TMP_InputField inputField;
@@ -53,6 +55,8 @@ namespace CyberConbini.UI
         private Color normalGlowColor = new Color(0.1f, 0.9f, 0.3f);
         private Color successGlowColor = new Color(0.25f, 1.0f, 0.70f);
 
+        private MaterialPropertyBlock crtPropertyBlock;
+
         private void Awake()
         {
             // Auto-obtener el validador si no está asignado
@@ -64,6 +68,8 @@ namespace CyberConbini.UI
                     validator = gameObject.AddComponent<ChallengeValidator>();
                 }
             }
+
+            CacheNormalCrtEmission();
         }
 
         private void Start()
@@ -202,14 +208,13 @@ namespace CyberConbini.UI
         {
             if (crtScreenRenderer != null)
             {
-                Material mat = crtScreenRenderer.sharedMaterial;
-                if (mat != null)
+                Material sharedMaterial = crtScreenRenderer.sharedMaterial;
+                if (sharedMaterial != null && sharedMaterial.HasProperty(EmissionColorPropertyId))
                 {
-                    mat.EnableKeyword("_EMISSION");
-                    if (mat.HasProperty("_EmissionColor"))
-                    {
-                        mat.SetColor("_EmissionColor", emissionColor);
-                    }
+                    crtPropertyBlock ??= new MaterialPropertyBlock();
+                    crtScreenRenderer.GetPropertyBlock(crtPropertyBlock);
+                    crtPropertyBlock.SetColor(EmissionColorPropertyId, emissionColor);
+                    crtScreenRenderer.SetPropertyBlock(crtPropertyBlock);
                 }
             }
 
@@ -217,6 +222,29 @@ namespace CyberConbini.UI
             {
                 crtGlowLight.color = lightColor;
                 crtGlowLight.intensity = lightIntensity;
+            }
+        }
+
+        private void CacheNormalCrtEmission()
+        {
+            if (crtScreenRenderer == null)
+            {
+                return;
+            }
+
+            crtPropertyBlock = new MaterialPropertyBlock();
+            crtScreenRenderer.GetPropertyBlock(crtPropertyBlock);
+
+            if (crtPropertyBlock.HasColor(EmissionColorPropertyId))
+            {
+                normalCrtEmission = crtPropertyBlock.GetColor(EmissionColorPropertyId);
+                return;
+            }
+
+            Material sharedMaterial = crtScreenRenderer.sharedMaterial;
+            if (sharedMaterial != null && sharedMaterial.HasProperty(EmissionColorPropertyId))
+            {
+                normalCrtEmission = sharedMaterial.GetColor(EmissionColorPropertyId);
             }
         }
     }
