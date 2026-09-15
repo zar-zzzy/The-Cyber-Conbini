@@ -13,6 +13,7 @@ namespace CyberConbini.Tests.EditMode
         private ChallengeValidator validator;
         private ChallengeDefinition challenge;
         private ChallengeDefinition secondChallenge;
+        private ChallengeDefinition thirdChallenge;
 
         [SetUp]
         public void SetUp()
@@ -24,6 +25,7 @@ namespace CyberConbini.Tests.EditMode
             validator = testGameObject.AddComponent<ChallengeValidator>();
             challenge = catalog.GetChallenge(0);
             secondChallenge = catalog.GetChallenge(1);
+            thirdChallenge = catalog.GetChallenge(2);
         }
 
         [TearDown]
@@ -156,6 +158,32 @@ namespace CyberConbini.Tests.EditMode
         public void Validate_SecondChallengeInvalidInputs_ReturnFailure(string playerInput)
         {
             ValidationResult result = validator.Validate(secondChallenge, playerInput);
+
+            Assert.That(result.IsSuccess, Is.False);
+            Assert.That(result.FeedbackMessage, Is.Not.Empty);
+        }
+
+        [TestCase("print(\"Onigiri de salmón\")")]
+        [TestCase("print('Onigiri de salmón')")]
+        [TestCase("print(  \"Onigiri de salmón\"  )")]
+        public void Validate_ThirdChallengeValidPrintVariants_ReturnSuccess(string playerInput)
+        {
+            ValidationResult result = validator.Validate(thirdChallenge, playerInput);
+
+            Assert.That(result.IsSuccess, Is.True);
+            Assert.That(result.ConsoleOutput, Is.EqualTo("> Onigiri de salmón"));
+            Assert.That(result.FeedbackMessage, Is.EqualTo(
+                "¡Correcto! El producto ha sido registrado."
+            ));
+        }
+
+        [TestCase("print(\"Onigiri\")")]
+        [TestCase("Onigiri de salmón")]
+        [TestCase("input(\"Onigiri de salmón\")")]
+        [TestCase("print(\"Bienvenido al Cyber-Conbini\")")]
+        public void Validate_ThirdChallengeInvalidInputs_ReturnFailure(string playerInput)
+        {
+            ValidationResult result = validator.Validate(thirdChallenge, playerInput);
 
             Assert.That(result.IsSuccess, Is.False);
             Assert.That(result.FeedbackMessage, Is.Not.Empty);

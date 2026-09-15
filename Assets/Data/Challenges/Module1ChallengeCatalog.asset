@@ -43,3 +43,16 @@ MonoBehaviour:
       variableName:
       expectedValue: Turno nocturno iniciado
       valueKind: 0
+  - id: M1_R3
+    moduleId: M1
+    title: Producto en caja
+    prompt: 'El cliente ha dejado un producto en el mostrador. Muestra el nombre del producto en la terminal:'
+    targetDisplayText: Onigiri de salmón
+    hint: 'Pista: usa print() y escribe el nombre del producto entre comillas.'
+    expectedOutput: Onigiri de salmón
+    successFeedback: "\xA1Correcto! El producto ha sido registrado."
+    validationType: 0
+    rules:
+      variableName:
+      expectedValue: Onigiri de salmón
+      valueKind: 0

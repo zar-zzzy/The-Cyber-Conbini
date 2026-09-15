@@ -9,7 +9,7 @@ namespace CyberConbini.Tests.EditMode
         private const string CatalogPath = "Assets/Data/Challenges/Module1ChallengeCatalog.asset";
 
         [Test]
-        public void Module1Catalog_LoadsTwoChallengesInOrder()
+        public void Module1Catalog_LoadsThreeChallengesInOrder()
         {
             ChallengeCatalog catalog = AssetDatabase.LoadAssetAtPath<ChallengeCatalog>(CatalogPath);
 
@@ -17,9 +17,10 @@ namespace CyberConbini.Tests.EditMode
             Assert.That(catalog.ModuleId, Is.EqualTo("M1"));
             Assert.That(catalog.ModuleTitle, Is.EqualTo("Módulo 1 — Primer turno"));
             Assert.That(catalog.PlannedChallengeCount, Is.EqualTo(6));
-            Assert.That(catalog.ChallengeCount, Is.EqualTo(2));
+            Assert.That(catalog.ChallengeCount, Is.EqualTo(3));
             Assert.That(catalog.GetChallenge(0).Id, Is.EqualTo("M1_R1"));
             Assert.That(catalog.GetChallenge(1).Id, Is.EqualTo("M1_R2"));
+            Assert.That(catalog.GetChallenge(2).Id, Is.EqualTo("M1_R3"));
         }
 
         [Test]
@@ -76,6 +77,35 @@ namespace CyberConbini.Tests.EditMode
             Assert.That(challenge.ValidationType, Is.EqualTo(ChallengeValidationType.PrintLiteral));
             Assert.That(challenge.Rules, Is.Not.Null);
             Assert.That(challenge.Rules.ExpectedValue, Is.EqualTo("Turno nocturno iniciado"));
+            Assert.That(challenge.HasRequiredData, Is.True);
+        }
+
+        [Test]
+        public void ThirdChallenge_ContainsAllRequiredPrintLiteralData()
+        {
+            ChallengeCatalog catalog = AssetDatabase.LoadAssetAtPath<ChallengeCatalog>(CatalogPath);
+            Assert.That(catalog, Is.Not.Null);
+
+            ChallengeDefinition challenge = catalog.GetChallenge(2);
+
+            Assert.That(challenge, Is.Not.Null);
+            Assert.That(challenge.Id, Is.EqualTo("M1_R3"));
+            Assert.That(challenge.ModuleId, Is.EqualTo("M1"));
+            Assert.That(challenge.Title, Is.EqualTo("Producto en caja"));
+            Assert.That(challenge.Prompt, Is.EqualTo(
+                "El cliente ha dejado un producto en el mostrador. Muestra el nombre del producto en la terminal:"
+            ));
+            Assert.That(challenge.TargetDisplayText, Is.EqualTo("Onigiri de salmón"));
+            Assert.That(challenge.Hint, Is.EqualTo(
+                "Pista: usa print() y escribe el nombre del producto entre comillas."
+            ));
+            Assert.That(challenge.ExpectedOutput, Is.EqualTo("Onigiri de salmón"));
+            Assert.That(challenge.SuccessFeedback, Is.EqualTo(
+                "¡Correcto! El producto ha sido registrado."
+            ));
+            Assert.That(challenge.ValidationType, Is.EqualTo(ChallengeValidationType.PrintLiteral));
+            Assert.That(challenge.Rules, Is.Not.Null);
+            Assert.That(challenge.Rules.ExpectedValue, Is.EqualTo("Onigiri de salmón"));
             Assert.That(challenge.HasRequiredData, Is.True);
         }
     }
