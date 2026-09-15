@@ -67,7 +67,8 @@ namespace CyberConbini.Gameplay
             !string.IsNullOrWhiteSpace(successFeedback) &&
             rules != null &&
             !string.IsNullOrWhiteSpace(rules.ExpectedValue) &&
-            (validationType != ChallengeValidationType.VariableAssignment ||
+            ((validationType != ChallengeValidationType.VariableAssignment &&
+              validationType != ChallengeValidationType.VariableAssignmentAndPrint) ||
                 !string.IsNullOrWhiteSpace(rules.VariableName));
     }
 }

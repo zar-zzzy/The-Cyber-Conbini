@@ -33,6 +33,12 @@ namespace CyberConbini.Gameplay
             TimeSpan.FromMilliseconds(50)
         );
 
+        private static readonly Regex VariableAssignmentAndPrintRegex = new Regex(
+            @"\A[ \t]*(?<assignName>[A-Za-z_][A-Za-z0-9_]*)[ \t]*=[ \t]*(?<assignQuote>[""'])(?<assignValue>[^\r\n]*?)\k<assignQuote>[ \t]*\r?\n[ \t]*print[ \t]*\([ \t]*(?<printName>[A-Za-z_][A-Za-z0-9_]*)[ \t]*\)[ \t]*\z",
+            RegexOptions.CultureInvariant,
+            TimeSpan.FromMilliseconds(50)
+        );
+
         /// <summary>
         /// Valida el texto del jugador contra la regla controlada del reto.
         /// </summary>
@@ -61,6 +67,11 @@ namespace CyberConbini.Gameplay
                     ConsoleOutput = "> Error: instrucción demasiado larga.",
                     FeedbackMessage = "La instrucción es demasiado larga. Intenta una solución más breve."
                 };
+            }
+
+            if (challenge.ValidationType == ChallengeValidationType.VariableAssignmentAndPrint)
+            {
+                return ValidateVariableAssignmentAndPrint(challenge, playerInput.Trim());
             }
 
             if (challenge.ValidationType == ChallengeValidationType.VariableAssignment)
@@ -176,6 +187,57 @@ namespace CyberConbini.Gameplay
                 {
                     IsSuccess = false,
                     ConsoleOutput = "> " + EscapeRichText(extractedValue),
+                    FeedbackMessage = $"Aún no coincide. Se esperaba: \"{expectedValue}\"."
+                };
+            }
+
+            return new ValidationResult
+            {
+                IsSuccess = true,
+                ConsoleOutput = "> " + challenge.ExpectedOutput,
+                FeedbackMessage = challenge.SuccessFeedback
+            };
+        }
+
+        private static ValidationResult ValidateVariableAssignmentAndPrint(
+            ChallengeDefinition challenge,
+            string trimmedInput
+        )
+        {
+            Match match;
+
+            try
+            {
+                match = VariableAssignmentAndPrintRegex.Match(trimmedInput);
+            }
+            catch (RegexMatchTimeoutException)
+            {
+                return UnrecognizedInstruction();
+            }
+
+            if (!match.Success)
+            {
+                return UnrecognizedInstruction();
+            }
+
+            string assignmentName = match.Groups["assignName"].Value;
+            string assignmentValue = match.Groups["assignValue"].Value;
+            string printName = match.Groups["printName"].Value;
+            string expectedVariableName = challenge.Rules.VariableName;
+            string expectedValue = challenge.Rules.ExpectedValue;
+
+            if (!string.Equals(assignmentName, expectedVariableName, StringComparison.Ordinal) ||
+                !string.Equals(printName, expectedVariableName, StringComparison.Ordinal))
+            {
+                return UnrecognizedInstruction();
+            }
+
+            if (!string.Equals(assignmentValue, expectedValue, StringComparison.Ordinal))
+            {
+                return new ValidationResult
+                {
+                    IsSuccess = false,
+                    ConsoleOutput = "> " + EscapeRichText(assignmentValue),
                     FeedbackMessage = $"Aún no coincide. Se esperaba: \"{expectedValue}\"."
                 };
             }

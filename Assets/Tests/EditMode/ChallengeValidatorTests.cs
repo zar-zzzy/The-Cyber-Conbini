@@ -15,6 +15,7 @@ namespace CyberConbini.Tests.EditMode
         private ChallengeDefinition secondChallenge;
         private ChallengeDefinition thirdChallenge;
         private ChallengeDefinition fourthChallenge;
+        private ChallengeDefinition fifthChallenge;
 
         [SetUp]
         public void SetUp()
@@ -28,6 +29,7 @@ namespace CyberConbini.Tests.EditMode
             secondChallenge = catalog.GetChallenge(1);
             thirdChallenge = catalog.GetChallenge(2);
             fourthChallenge = catalog.GetChallenge(3);
+            fifthChallenge = catalog.GetChallenge(4);
         }
 
         [TearDown]
@@ -248,6 +250,71 @@ namespace CyberConbini.Tests.EditMode
             string oversizedInput = new string('a', ChallengeValidator.MaxInputLength + 1);
 
             ValidationResult result = validator.Validate(fourthChallenge, oversizedInput);
+
+            Assert.That(result.IsSuccess, Is.False);
+            Assert.That(result.ConsoleOutput, Is.EqualTo("> Error: instrucción demasiado larga."));
+        }
+
+        [TestCase("cliente = \"Aiko\"\nprint(cliente)")]
+        [TestCase("cliente = 'Aiko'\nprint(cliente)")]
+        [TestCase("cliente    =    \"Aiko\"\nprint( cliente )")]
+        [TestCase("cliente=\"Aiko\"\nprint(cliente)")]
+        [TestCase("cliente = \"Aiko\"\r\nprint(cliente)")]
+        public void Validate_FifthChallengeValidAssignmentAndPrintVariants_ReturnSuccess(string playerInput)
+        {
+            ValidationResult result = validator.Validate(fifthChallenge, playerInput);
+
+            Assert.That(result.IsSuccess, Is.True);
+            Assert.That(result.ConsoleOutput, Is.EqualTo("> Aiko"));
+            Assert.That(result.FeedbackMessage, Is.EqualTo(
+                "¡Correcto! El nombre de la cliente aparece en la terminal."
+            ));
+        }
+
+        [TestCase("print(cliente)")]
+        [TestCase("cliente = \"Aiko\"")]
+        [TestCase("cliente = \"Aiko\"\nprint(\"Aiko\")")]
+        [TestCase("cliente = \"Aiko\"\nprint(\"cliente\")")]
+        [TestCase("cliente = \"Aiko\"\nprint(nombre)")]
+        [TestCase("nombre = \"Aiko\"\nprint(nombre)")]
+        [TestCase("cliente = \"Yuki\"\nprint(cliente)")]
+        [TestCase("cliente == \"Aiko\"\nprint(cliente)")]
+        [TestCase("cliente = Aiko\nprint(cliente)")]
+        [TestCase("print(cliente)\ncliente = \"Aiko\"")]
+        [TestCase("cliente = \"Aiko\"\nprint(cliente)\nprint(cliente)")]
+        [TestCase("# comentario\ncliente = \"Aiko\"\nprint(cliente)")]
+        [TestCase("cliente = \"Aiko\";\nprint(cliente)")]
+        [TestCase("cliente = \"A\\iko\"\nprint(cliente)")]
+        public void Validate_FifthChallengeInvalidAssignmentAndPrintInputs_ReturnFailure(string playerInput)
+        {
+            ValidationResult result = validator.Validate(fifthChallenge, playerInput);
+
+            Assert.That(result.IsSuccess, Is.False);
+            Assert.That(result.FeedbackMessage, Is.Not.Empty);
+        }
+
+        [Test]
+        public void Validate_FifthChallengeRichTextValue_EscapesMarkupInConsoleOutput()
+        {
+            ValidationResult result = validator.Validate(
+                fifthChallenge,
+                "cliente = \"<color=red>Aiko</color>\"\nprint(cliente)"
+            );
+
+            Assert.That(result.IsSuccess, Is.False);
+            Assert.That(result.ConsoleOutput, Does.Not.Contain("<color"));
+            Assert.That(result.ConsoleOutput, Does.Not.Contain("</color>"));
+            Assert.That(result.ConsoleOutput, Does.Contain(
+                "&lt;color=red&gt;Aiko&lt;/color&gt;"
+            ));
+        }
+
+        [Test]
+        public void Validate_FifthChallengeOversizedInput_IsRejectedBeforePatternMatching()
+        {
+            string oversizedInput = new string('a', ChallengeValidator.MaxInputLength + 1);
+
+            ValidationResult result = validator.Validate(fifthChallenge, oversizedInput);
 
             Assert.That(result.IsSuccess, Is.False);
             Assert.That(result.ConsoleOutput, Is.EqualTo("> Error: instrucción demasiado larga."));

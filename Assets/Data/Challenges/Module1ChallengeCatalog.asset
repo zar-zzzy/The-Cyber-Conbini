@@ -69,3 +69,16 @@ MonoBehaviour:
       variableName: cliente
       expectedValue: Aiko
       valueKind: 0
+  - id: M1_R5
+    moduleId: M1
+    title: Mostrar cliente
+    prompt: 'La cliente se llama Aiko. Guarda su nombre en la variable cliente y luego muéstralo en la terminal.'
+    targetDisplayText: "cliente = \"Aiko\"\nprint(cliente)"
+    hint: 'Pista: primero guarda el nombre usando =. En la siguiente línea usa print(cliente) sin comillas.'
+    expectedOutput: Aiko
+    successFeedback: "\xA1Correcto! El nombre de la cliente aparece en la terminal."
+    validationType: 2
+    rules:
+      variableName: cliente
+      expectedValue: Aiko
+      valueKind: 0
