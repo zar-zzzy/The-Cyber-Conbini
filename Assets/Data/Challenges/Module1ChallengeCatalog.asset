@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49535c3d4b6acae40bf274a3826d032a, type: 3}
+  m_Name: Module1ChallengeCatalog
+  m_EditorClassIdentifier: CyberConbini.Runtime::CyberConbini.Gameplay.ChallengeCatalog
+  moduleId: M1
+  moduleTitle: "M\xF3dulo 1 \u2014 Primer turno"
+  plannedChallengeCount: 6
+  challenges:
+  - id: M1_R1
+    title: Saludo inicial
+    prompt: 'El primer cliente ha llegado. Muestra el siguiente mensaje en la terminal:'
+    targetDisplayText: Bienvenido al Cyber-Conbini
+    hint: 'Pista: usa print() y escribe el mensaje entre comillas.'
+    expectedOutput: Bienvenido al Cyber-Conbini
+    successFeedback: "\xA1Correcto! El cliente ha sido recibido."
+    validationType: 0
+    rules:
+      variableName: 
+      expectedValue: Bienvenido al Cyber-Conbini
+      valueKind: 0

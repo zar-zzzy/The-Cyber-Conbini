@@ -20,6 +20,18 @@ namespace CyberConbini.UI
         [Tooltip("Texto donde se proyecta la consola o salida del programa")]
         [SerializeField] private TextMeshProUGUI consoleOutputText;
 
+        [Tooltip("Título visible del módulo actual")]
+        [SerializeField] private TextMeshProUGUI moduleText;
+
+        [Tooltip("Contador visible del reto actual")]
+        [SerializeField] private TextMeshProUGUI progressText;
+
+        [Tooltip("Descripción visible del reto actual")]
+        [SerializeField] private TextMeshProUGUI promptIntroText;
+
+        [Tooltip("Texto objetivo visible del reto actual")]
+        [SerializeField] private TextMeshProUGUI promptTargetText;
+
         [Tooltip("Contenedor del mensaje de feedback")]
         [SerializeField] private GameObject feedbackPanel;
 
@@ -35,7 +47,7 @@ namespace CyberConbini.UI
         [SerializeField] private Button buttonReset;
 
         [Header("Lógica")]
-        [SerializeField] private ChallengeValidator validator;
+        [SerializeField] private ChallengeFlowController flowController;
 
         [Header("Efectos Visuales en Escena (CRT Feedback)")]
         [Tooltip("Renderer de la pantalla CRT para alterar emisión")]
@@ -59,14 +71,9 @@ namespace CyberConbini.UI
 
         private void Awake()
         {
-            // Auto-obtener el validador si no está asignado
-            if (validator == null)
+            if (flowController == null)
             {
-                validator = GetComponent<ChallengeValidator>();
-                if (validator == null)
-                {
-                    validator = gameObject.AddComponent<ChallengeValidator>();
-                }
+                flowController = GetComponent<ChallengeFlowController>();
             }
 
             CacheNormalCrtEmission();
@@ -74,6 +81,13 @@ namespace CyberConbini.UI
 
         private void Start()
         {
+            if (flowController != null && !flowController.IsInitialized)
+            {
+                flowController.Initialize();
+            }
+
+            ApplyCurrentChallengePresentation();
+
             // Configurar estado inicial
             ResetTerminalState();
 
@@ -96,10 +110,10 @@ namespace CyberConbini.UI
         /// </summary>
         public void OnClickExecute()
         {
-            if (inputField == null || validator == null) return;
+            if (inputField == null || flowController == null || !flowController.IsInitialized) return;
 
             string code = inputField.text;
-            ValidationResult result = validator.ValidateFirstChallenge(code);
+            ValidationResult result = flowController.ValidateCurrent(code);
 
             // Actualizar consola de salida
             if (consoleOutputText != null)
@@ -156,7 +170,8 @@ namespace CyberConbini.UI
 
             if (feedbackMessageText != null)
             {
-                feedbackMessageText.text = "Pista: usa print() y escribe el mensaje entre comillas.";
+                ChallengeDefinition challenge = flowController != null ? flowController.CurrentChallenge : null;
+                feedbackMessageText.text = challenge != null ? challenge.Hint : string.Empty;
             }
 
             if (feedbackBackground != null)
@@ -202,6 +217,40 @@ namespace CyberConbini.UI
             }
 
             SetCrtScreenVisuals(normalCrtEmission, normalGlowColor, 0.4f);
+        }
+
+        private void ApplyCurrentChallengePresentation()
+        {
+            if (flowController == null || !flowController.IsInitialized)
+            {
+                return;
+            }
+
+            ChallengeDefinition challenge = flowController.CurrentChallenge;
+            if (challenge == null)
+            {
+                return;
+            }
+
+            if (moduleText != null)
+            {
+                moduleText.text = flowController.ModuleTitle;
+            }
+
+            if (progressText != null)
+            {
+                progressText.text = $"Reto {flowController.CurrentIndex + 1} de {flowController.PlannedChallengeCount}";
+            }
+
+            if (promptIntroText != null)
+            {
+                promptIntroText.text = challenge.Prompt;
+            }
+
+            if (promptTargetText != null)
+            {
+                promptTargetText.text = $"> \"{challenge.TargetDisplayText}\"";
+            }
         }
 
         private void SetCrtScreenVisuals(Color emissionColor, Color lightColor, float lightIntensity)

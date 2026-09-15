@@ -3032,6 +3032,7 @@ GameObject:
   - component: {fileID: 1323910682}
   - component: {fileID: 1323910681}
   - component: {fileID: 1323910680}
+  - component: {fileID: 1323910686}
   m_Layer: 0
   m_Name: UI_Terminal
   m_TagString: Untagged
@@ -3053,13 +3054,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CyberConbini.UI.TerminalUIController
   inputField: {fileID: 1942689056}
   consoleOutputText: {fileID: 1758328084}
+  moduleText: {fileID: 744334012}
+  progressText: {fileID: 1828562501}
+  promptIntroText: {fileID: 1679881390}
+  promptTargetText: {fileID: 73957665}
   feedbackPanel: {fileID: 684158187}
   feedbackMessageText: {fileID: 1506612636}
   feedbackBackground: {fileID: 684158189}
   buttonExecute: {fileID: 3127810}
   buttonHint: {fileID: 1924965359}
   buttonReset: {fileID: 203522195}
-  validator: {fileID: 1323910681}
+  flowController: {fileID: 1323910686}
   crtScreenRenderer: {fileID: 1820092301}
   crtGlowLight: {fileID: 851853042}
   colorSuccess: {r: 0.2, g: 0.85, b: 0.55, a: 0.95}
@@ -3162,6 +3167,20 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1323910686
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1323910679}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42d44ff9ef030c84fbc7888ca4ed73e8, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: CyberConbini.Runtime::CyberConbini.Gameplay.ChallengeFlowController
+  catalog: {fileID: 11400000, guid: edb907b1196fd374d8d24a7635b24801, type: 2}
+  validator: {fileID: 1323910681}
 --- !u!1 &1334795876
 GameObject:
   m_ObjectHideFlags: 0

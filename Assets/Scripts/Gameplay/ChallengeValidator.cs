@@ -15,32 +15,29 @@ namespace CyberConbini.Gameplay
     }
 
     /// <summary>
-    /// Validador modular para el primer reto de Python didáctico: print("Bienvenido al Cyber-Conbini").
-    /// Utiliza análisis determinístico por patrones de texto/expresiones regulares sin ejecutar código arbitrario.
+    /// Valida el subconjunto didáctico permitido sin ejecutar código Python.
     /// </summary>
     public class ChallengeValidator : MonoBehaviour
     {
-        public const string TARGET_MESSAGE = "Bienvenido al Cyber-Conbini";
+        public const int MaxInputLength = 1000;
 
-        // Expresión regular que acepta comillas simples o dobles y espacios opcionales antes/después del texto dentro de print()
-        // Ejemplos válidos:
-        // print("Bienvenido al Cyber-Conbini")
-        // print( "Bienvenido al Cyber-Conbini" )
-        // print('Bienvenido al Cyber-Conbini')
-        // print(   'Bienvenido al Cyber-Conbini'   )
-        private static readonly Regex PrintRegex = new Regex(
-            @"^\s*print\s*\(\s*([""'])(.*?)\1\s*\)\s*$",
-            RegexOptions.Compiled | RegexOptions.Singleline
+        private static readonly Regex PrintLiteralRegex = new Regex(
+            @"\A[ \t]*print[ \t]*\([ \t]*(?<quote>[""'])(?<value>[^\r\n]*?)\k<quote>[ \t]*\)[ \t]*\z",
+            RegexOptions.CultureInvariant,
+            TimeSpan.FromMilliseconds(50)
         );
 
         /// <summary>
-        /// Valida el código Python ingresado por el jugador para el reto 1.
+        /// Valida el texto del jugador contra la regla controlada del reto.
         /// </summary>
-        /// <param name="rawInput">Código sin procesar escrito en el InputField</param>
-        /// <returns>Estructura con el resultado y mensajes asociados</returns>
-        public ValidationResult ValidateFirstChallenge(string rawInput)
+        public ValidationResult Validate(ChallengeDefinition challenge, string playerInput)
         {
-            if (string.IsNullOrWhiteSpace(rawInput))
+            if (challenge == null || !challenge.HasRequiredData)
+            {
+                return ConfigurationError();
+            }
+
+            if (string.IsNullOrWhiteSpace(playerInput))
             {
                 return new ValidationResult
                 {
@@ -50,38 +47,70 @@ namespace CyberConbini.Gameplay
                 };
             }
 
-            string trimmed = rawInput.Trim();
+            if (playerInput.Length > MaxInputLength)
+            {
+                return new ValidationResult
+                {
+                    IsSuccess = false,
+                    ConsoleOutput = "> Error: instrucción demasiado larga.",
+                    FeedbackMessage = "La instrucción es demasiado larga. Intenta una solución más breve."
+                };
+            }
 
-            // Evaluar coincidencia con la estructura print(...)
-            Match match = PrintRegex.Match(trimmed);
+            if (challenge.ValidationType != ChallengeValidationType.PrintLiteral)
+            {
+                return ConfigurationError();
+            }
+
+            return ValidatePrintLiteral(challenge, playerInput.Trim());
+        }
+
+        private static ValidationResult ValidatePrintLiteral(
+            ChallengeDefinition challenge,
+            string trimmedInput
+        )
+        {
+            Match match;
+
+            try
+            {
+                match = PrintLiteralRegex.Match(trimmedInput);
+            }
+            catch (RegexMatchTimeoutException)
+            {
+                return new ValidationResult
+                {
+                    IsSuccess = false,
+                    ConsoleOutput = "> Error: instrucción no reconocida.",
+                    FeedbackMessage = "Aún no funciona. Revisa la instrucción e inténtalo otra vez."
+                };
+            }
+
+            string expectedValue = challenge.Rules.ExpectedValue;
 
             if (match.Success)
             {
-                string extractedText = match.Groups[2].Value;
+                string extractedText = match.Groups["value"].Value;
 
-                // Verificar que el contenido del mensaje sea exactamente el solicitado
-                if (string.Equals(extractedText, TARGET_MESSAGE, StringComparison.Ordinal))
+                if (string.Equals(extractedText, expectedValue, StringComparison.Ordinal))
                 {
                     return new ValidationResult
                     {
                         IsSuccess = true,
-                        ConsoleOutput = "> " + TARGET_MESSAGE,
-                        FeedbackMessage = "¡Correcto! El cliente ha sido recibido."
+                        ConsoleOutput = "> " + challenge.ExpectedOutput,
+                        FeedbackMessage = challenge.SuccessFeedback
                     };
                 }
-                else
+
+                return new ValidationResult
                 {
-                    return new ValidationResult
-                    {
-                        IsSuccess = false,
-                        ConsoleOutput = "> " + extractedText,
-                        FeedbackMessage = $"Aún no coincide. Se esperaba: \"{TARGET_MESSAGE}\"."
-                    };
-                }
+                    IsSuccess = false,
+                    ConsoleOutput = "> " + EscapeRichText(extractedText),
+                    FeedbackMessage = $"Aún no coincide. Se esperaba: \"{expectedValue}\"."
+                };
             }
 
-            // Si el jugador escribió el texto sin print()
-            if (trimmed.Contains(TARGET_MESSAGE))
+            if (string.Equals(trimmedInput, expectedValue, StringComparison.Ordinal))
             {
                 return new ValidationResult
                 {
@@ -91,12 +120,29 @@ namespace CyberConbini.Gameplay
                 };
             }
 
-            // Fallo general de sintaxis
             return new ValidationResult
             {
                 IsSuccess = false,
                 ConsoleOutput = "> Error: instrucción no reconocida.",
                 FeedbackMessage = "Aún no funciona. Revisa la instrucción e inténtalo otra vez."
+            };
+        }
+
+        private static string EscapeRichText(string value)
+        {
+            return value
+                .Replace("&", "&amp;")
+                .Replace("<", "&lt;")
+                .Replace(">", "&gt;");
+        }
+
+        private static ValidationResult ConfigurationError()
+        {
+            return new ValidationResult
+            {
+                IsSuccess = false,
+                ConsoleOutput = "> Error: reto no disponible.",
+                FeedbackMessage = "No se pudo cargar la configuración del reto."
             };
         }
     }
