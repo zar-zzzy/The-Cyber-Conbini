@@ -112,7 +112,7 @@ namespace CyberConbini.Tests.EditMode
         }
 
         [Test]
-        public void SolveThirdChallenge_WhenNoFourthChallenge_CannotAdvancePastCatalog()
+        public void SolveThirdChallenge_AdvancesToFourthChallenge()
         {
             ChallengeFlowController flowController = CreateInitializedFlow();
             flowController.ValidateCurrent("print(\"Bienvenido al Cyber-Conbini\")");
@@ -123,14 +123,56 @@ namespace CyberConbini.Tests.EditMode
             ValidationResult result = flowController.ValidateCurrent(
                 "print(\"Onigiri de salmón\")"
             );
-            bool advanced = flowController.TryAdvance();
 
             Assert.That(result.IsSuccess, Is.True);
             Assert.That(flowController.IsChallengeCompleted("M1_R3"), Is.True);
+            Assert.That(flowController.CanAdvance, Is.True);
+
+            bool advanced = flowController.TryAdvance();
+
+            Assert.That(advanced, Is.True);
+            Assert.That(flowController.CurrentIndex, Is.EqualTo(3));
+            Assert.That(flowController.CurrentChallenge.Id, Is.EqualTo("M1_R4"));
             Assert.That(flowController.CanAdvance, Is.False);
+        }
+
+        [Test]
+        public void TryAdvance_FromThirdBeforeSolving_DoesNotAdvanceToFourthChallenge()
+        {
+            ChallengeFlowController flowController = CreateInitializedFlow();
+            flowController.ValidateCurrent("print(\"Bienvenido al Cyber-Conbini\")");
+            flowController.TryAdvance();
+            flowController.ValidateCurrent("print(\"Turno nocturno iniciado\")");
+            flowController.TryAdvance();
+
+            bool advanced = flowController.TryAdvance();
+
             Assert.That(advanced, Is.False);
             Assert.That(flowController.CurrentIndex, Is.EqualTo(2));
             Assert.That(flowController.CurrentChallenge.Id, Is.EqualTo("M1_R3"));
+        }
+
+        [Test]
+        public void SolveFourthChallenge_WhenNoFifthChallenge_CannotAdvancePastCatalog()
+        {
+            ChallengeFlowController flowController = CreateInitializedFlow();
+            flowController.ValidateCurrent("print(\"Bienvenido al Cyber-Conbini\")");
+            flowController.TryAdvance();
+            flowController.ValidateCurrent("print(\"Turno nocturno iniciado\")");
+            flowController.TryAdvance();
+            flowController.ValidateCurrent("print(\"Onigiri de salmón\")");
+            flowController.TryAdvance();
+
+            ValidationResult result = flowController.ValidateCurrent("cliente = \"Aiko\"");
+            bool advanced = flowController.TryAdvance();
+
+            Assert.That(result.IsSuccess, Is.True);
+            Assert.That(flowController.IsChallengeCompleted("M1_R4"), Is.True);
+            Assert.That(flowController.IsCurrentChallengeCompleted, Is.True);
+            Assert.That(flowController.CanAdvance, Is.False);
+            Assert.That(advanced, Is.False);
+            Assert.That(flowController.CurrentIndex, Is.EqualTo(3));
+            Assert.That(flowController.CurrentChallenge.Id, Is.EqualTo("M1_R4"));
         }
 
         private ChallengeFlowController CreateInitializedFlow()

@@ -56,3 +56,16 @@ MonoBehaviour:
       variableName:
       expectedValue: Onigiri de salmón
       valueKind: 0
+  - id: M1_R4
+    moduleId: M1
+    title: Guardar cliente
+    prompt: 'La cliente se llama Aiko. Guarda su nombre en una variable llamada cliente.'
+    targetDisplayText: 'cliente = "Aiko"'
+    hint: 'Pista: escribe el nombre de la variable, usa = y guarda el texto entre comillas.'
+    expectedOutput: Variable cliente guardada correctamente.
+    successFeedback: "\xA1Correcto! El nombre de la cliente fue guardado."
+    validationType: 1
+    rules:
+      variableName: cliente
+      expectedValue: Aiko
+      valueKind: 0

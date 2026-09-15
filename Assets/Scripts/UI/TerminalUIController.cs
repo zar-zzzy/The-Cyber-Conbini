@@ -146,7 +146,10 @@ namespace CyberConbini.UI
                 }
 
                 SetCrtScreenVisuals(successCrtEmission, successGlowColor, 0.8f);
-                SetNextChallengeAvailability(flowController.CanAdvance);
+                SetNextChallengeAvailability(
+                    flowController.CanAdvance,
+                    flowController.IsCurrentChallengeCompleted
+                );
             }
             else
             {
@@ -229,7 +232,7 @@ namespace CyberConbini.UI
             SetCrtScreenVisuals(normalCrtEmission, normalGlowColor, 0.4f);
         }
 
-        private void SetNextChallengeAvailability(bool canAdvance)
+        private void SetNextChallengeAvailability(bool canAdvance, bool showWhenCompleted = false)
         {
             if (buttonNextChallenge == null)
             {
@@ -237,7 +240,7 @@ namespace CyberConbini.UI
             }
 
             buttonNextChallenge.interactable = canAdvance;
-            buttonNextChallenge.gameObject.SetActive(canAdvance);
+            buttonNextChallenge.gameObject.SetActive(canAdvance || showWhenCompleted);
         }
 
         private void ApplyCurrentChallengePresentation()

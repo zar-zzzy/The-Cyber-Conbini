@@ -9,7 +9,7 @@ namespace CyberConbini.Tests.EditMode
         private const string CatalogPath = "Assets/Data/Challenges/Module1ChallengeCatalog.asset";
 
         [Test]
-        public void Module1Catalog_LoadsThreeChallengesInOrder()
+        public void Module1Catalog_LoadsFourChallengesInOrder()
         {
             ChallengeCatalog catalog = AssetDatabase.LoadAssetAtPath<ChallengeCatalog>(CatalogPath);
 
@@ -17,10 +17,11 @@ namespace CyberConbini.Tests.EditMode
             Assert.That(catalog.ModuleId, Is.EqualTo("M1"));
             Assert.That(catalog.ModuleTitle, Is.EqualTo("Módulo 1 — Primer turno"));
             Assert.That(catalog.PlannedChallengeCount, Is.EqualTo(6));
-            Assert.That(catalog.ChallengeCount, Is.EqualTo(3));
+            Assert.That(catalog.ChallengeCount, Is.EqualTo(4));
             Assert.That(catalog.GetChallenge(0).Id, Is.EqualTo("M1_R1"));
             Assert.That(catalog.GetChallenge(1).Id, Is.EqualTo("M1_R2"));
             Assert.That(catalog.GetChallenge(2).Id, Is.EqualTo("M1_R3"));
+            Assert.That(catalog.GetChallenge(3).Id, Is.EqualTo("M1_R4"));
         }
 
         [Test]
@@ -106,6 +107,39 @@ namespace CyberConbini.Tests.EditMode
             Assert.That(challenge.ValidationType, Is.EqualTo(ChallengeValidationType.PrintLiteral));
             Assert.That(challenge.Rules, Is.Not.Null);
             Assert.That(challenge.Rules.ExpectedValue, Is.EqualTo("Onigiri de salmón"));
+            Assert.That(challenge.HasRequiredData, Is.True);
+        }
+
+        [Test]
+        public void FourthChallenge_ContainsAllRequiredVariableAssignmentData()
+        {
+            ChallengeCatalog catalog = AssetDatabase.LoadAssetAtPath<ChallengeCatalog>(CatalogPath);
+            Assert.That(catalog, Is.Not.Null);
+
+            ChallengeDefinition challenge = catalog.GetChallenge(3);
+
+            Assert.That(challenge, Is.Not.Null);
+            Assert.That(challenge.Id, Is.EqualTo("M1_R4"));
+            Assert.That(challenge.ModuleId, Is.EqualTo("M1"));
+            Assert.That(challenge.Title, Is.EqualTo("Guardar cliente"));
+            Assert.That(challenge.Prompt, Is.EqualTo(
+                "La cliente se llama Aiko. Guarda su nombre en una variable llamada cliente."
+            ));
+            Assert.That(challenge.TargetDisplayText, Is.EqualTo("cliente = \"Aiko\""));
+            Assert.That(challenge.Hint, Is.EqualTo(
+                "Pista: escribe el nombre de la variable, usa = y guarda el texto entre comillas."
+            ));
+            Assert.That(challenge.ExpectedOutput, Is.EqualTo(
+                "Variable cliente guardada correctamente."
+            ));
+            Assert.That(challenge.SuccessFeedback, Is.EqualTo(
+                "¡Correcto! El nombre de la cliente fue guardado."
+            ));
+            Assert.That(challenge.ValidationType, Is.EqualTo(ChallengeValidationType.VariableAssignment));
+            Assert.That(challenge.Rules, Is.Not.Null);
+            Assert.That(challenge.Rules.VariableName, Is.EqualTo("cliente"));
+            Assert.That(challenge.Rules.ExpectedValue, Is.EqualTo("Aiko"));
+            Assert.That(challenge.Rules.ValueKind, Is.EqualTo(ChallengeValueKind.String));
             Assert.That(challenge.HasRequiredData, Is.True);
         }
     }

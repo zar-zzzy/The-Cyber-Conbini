@@ -17,6 +17,8 @@ namespace CyberConbini.Gameplay
         public int PlannedChallengeCount => catalog != null ? catalog.PlannedChallengeCount : 0;
         public string ModuleTitle => catalog != null ? catalog.ModuleTitle : string.Empty;
         public bool IsInitialized => CurrentChallenge != null;
+        public bool IsCurrentChallengeCompleted =>
+            IsInitialized && IsChallengeCompleted(CurrentChallenge.Id);
         public bool CanAdvance
         {
             get

@@ -14,6 +14,7 @@ namespace CyberConbini.Tests.EditMode
         private ChallengeDefinition challenge;
         private ChallengeDefinition secondChallenge;
         private ChallengeDefinition thirdChallenge;
+        private ChallengeDefinition fourthChallenge;
 
         [SetUp]
         public void SetUp()
@@ -26,6 +27,7 @@ namespace CyberConbini.Tests.EditMode
             challenge = catalog.GetChallenge(0);
             secondChallenge = catalog.GetChallenge(1);
             thirdChallenge = catalog.GetChallenge(2);
+            fourthChallenge = catalog.GetChallenge(3);
         }
 
         [TearDown]
@@ -187,6 +189,68 @@ namespace CyberConbini.Tests.EditMode
 
             Assert.That(result.IsSuccess, Is.False);
             Assert.That(result.FeedbackMessage, Is.Not.Empty);
+        }
+
+        [TestCase("cliente = \"Aiko\"")]
+        [TestCase("cliente = 'Aiko'")]
+        [TestCase("cliente    =    \"Aiko\"")]
+        [TestCase("cliente=\"Aiko\"")]
+        public void Validate_FourthChallengeValidAssignments_ReturnSuccess(string playerInput)
+        {
+            ValidationResult result = validator.Validate(fourthChallenge, playerInput);
+
+            Assert.That(result.IsSuccess, Is.True);
+            Assert.That(result.ConsoleOutput, Is.EqualTo(
+                "> Variable cliente guardada correctamente."
+            ));
+            Assert.That(result.FeedbackMessage, Is.EqualTo(
+                "¡Correcto! El nombre de la cliente fue guardado."
+            ));
+        }
+
+        [TestCase("cliente = Aiko")]
+        [TestCase("nombre = \"Aiko\"")]
+        [TestCase("Cliente = \"Aiko\"")]
+        [TestCase("cliente == \"Aiko\"")]
+        [TestCase("print(\"Aiko\")")]
+        [TestCase("print(cliente)")]
+        [TestCase("cliente = \"Yuki\"")]
+        [TestCase("cliente = \"Aiko\"\nprint(cliente)")]
+        [TestCase("cliente = \"Aiko\";")]
+        [TestCase("cliente = \"A\\iko\"")]
+        public void Validate_FourthChallengeInvalidAssignments_ReturnFailure(string playerInput)
+        {
+            ValidationResult result = validator.Validate(fourthChallenge, playerInput);
+
+            Assert.That(result.IsSuccess, Is.False);
+            Assert.That(result.FeedbackMessage, Is.Not.Empty);
+        }
+
+        [Test]
+        public void Validate_FourthChallengeRichTextValue_EscapesMarkupInConsoleOutput()
+        {
+            ValidationResult result = validator.Validate(
+                fourthChallenge,
+                "cliente = \"<color=red>Aiko</color>\""
+            );
+
+            Assert.That(result.IsSuccess, Is.False);
+            Assert.That(result.ConsoleOutput, Does.Not.Contain("<color"));
+            Assert.That(result.ConsoleOutput, Does.Not.Contain("</color>"));
+            Assert.That(result.ConsoleOutput, Does.Contain(
+                "&lt;color=red&gt;Aiko&lt;/color&gt;"
+            ));
+        }
+
+        [Test]
+        public void Validate_FourthChallengeOversizedInput_IsRejectedBeforePatternMatching()
+        {
+            string oversizedInput = new string('a', ChallengeValidator.MaxInputLength + 1);
+
+            ValidationResult result = validator.Validate(fourthChallenge, oversizedInput);
+
+            Assert.That(result.IsSuccess, Is.False);
+            Assert.That(result.ConsoleOutput, Is.EqualTo("> Error: instrucción demasiado larga."));
         }
     }
 }

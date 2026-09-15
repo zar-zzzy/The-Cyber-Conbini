@@ -27,6 +27,12 @@ namespace CyberConbini.Gameplay
             TimeSpan.FromMilliseconds(50)
         );
 
+        private static readonly Regex VariableAssignmentRegex = new Regex(
+            @"\A[ \t]*(?<name>[A-Za-z_][A-Za-z0-9_]*)[ \t]*=[ \t]*(?<quote>[""'])(?<value>[^\r\n]*?)\k<quote>[ \t]*\z",
+            RegexOptions.CultureInvariant,
+            TimeSpan.FromMilliseconds(50)
+        );
+
         /// <summary>
         /// Valida el texto del jugador contra la regla controlada del reto.
         /// </summary>
@@ -55,6 +61,11 @@ namespace CyberConbini.Gameplay
                     ConsoleOutput = "> Error: instrucción demasiado larga.",
                     FeedbackMessage = "La instrucción es demasiado larga. Intenta una solución más breve."
                 };
+            }
+
+            if (challenge.ValidationType == ChallengeValidationType.VariableAssignment)
+            {
+                return ValidateVariableAssignment(challenge, playerInput.Trim());
             }
 
             if (challenge.ValidationType != ChallengeValidationType.PrintLiteral)
@@ -128,6 +139,55 @@ namespace CyberConbini.Gameplay
             };
         }
 
+        private static ValidationResult ValidateVariableAssignment(
+            ChallengeDefinition challenge,
+            string trimmedInput
+        )
+        {
+            Match match;
+
+            try
+            {
+                match = VariableAssignmentRegex.Match(trimmedInput);
+            }
+            catch (RegexMatchTimeoutException)
+            {
+                return UnrecognizedInstruction();
+            }
+
+            if (!match.Success)
+            {
+                return UnrecognizedInstruction();
+            }
+
+            string variableName = match.Groups["name"].Value;
+            string extractedValue = match.Groups["value"].Value;
+            string expectedVariableName = challenge.Rules.VariableName;
+            string expectedValue = challenge.Rules.ExpectedValue;
+
+            if (!string.Equals(variableName, expectedVariableName, StringComparison.Ordinal))
+            {
+                return UnrecognizedInstruction();
+            }
+
+            if (!string.Equals(extractedValue, expectedValue, StringComparison.Ordinal))
+            {
+                return new ValidationResult
+                {
+                    IsSuccess = false,
+                    ConsoleOutput = "> " + EscapeRichText(extractedValue),
+                    FeedbackMessage = $"Aún no coincide. Se esperaba: \"{expectedValue}\"."
+                };
+            }
+
+            return new ValidationResult
+            {
+                IsSuccess = true,
+                ConsoleOutput = "> " + challenge.ExpectedOutput,
+                FeedbackMessage = challenge.SuccessFeedback
+            };
+        }
+
         private static string EscapeRichText(string value)
         {
             return value
@@ -143,6 +203,16 @@ namespace CyberConbini.Gameplay
                 IsSuccess = false,
                 ConsoleOutput = "> Error: reto no disponible.",
                 FeedbackMessage = "No se pudo cargar la configuración del reto."
+            };
+        }
+
+        private static ValidationResult UnrecognizedInstruction()
+        {
+            return new ValidationResult
+            {
+                IsSuccess = false,
+                ConsoleOutput = "> Error: instrucción no reconocida.",
+                FeedbackMessage = "Aún no funciona. Revisa la instrucción e inténtalo otra vez."
             };
         }
     }
