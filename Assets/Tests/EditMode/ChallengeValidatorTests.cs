@@ -16,6 +16,7 @@ namespace CyberConbini.Tests.EditMode
         private ChallengeDefinition thirdChallenge;
         private ChallengeDefinition fourthChallenge;
         private ChallengeDefinition fifthChallenge;
+        private ChallengeDefinition sixthChallenge;
 
         [SetUp]
         public void SetUp()
@@ -30,6 +31,7 @@ namespace CyberConbini.Tests.EditMode
             thirdChallenge = catalog.GetChallenge(2);
             fourthChallenge = catalog.GetChallenge(3);
             fifthChallenge = catalog.GetChallenge(4);
+            sixthChallenge = catalog.GetChallenge(5);
         }
 
         [TearDown]
@@ -315,6 +317,72 @@ namespace CyberConbini.Tests.EditMode
             string oversizedInput = new string('a', ChallengeValidator.MaxInputLength + 1);
 
             ValidationResult result = validator.Validate(fifthChallenge, oversizedInput);
+
+            Assert.That(result.IsSuccess, Is.False);
+            Assert.That(result.ConsoleOutput, Is.EqualTo("> Error: instrucción demasiado larga."));
+        }
+
+        [TestCase("precio_onigiri = 450\nprint(precio_onigiri)")]
+        [TestCase("precio_onigiri=450\nprint(precio_onigiri)")]
+        [TestCase("precio_onigiri    =    450\nprint( precio_onigiri )")]
+        public void Validate_SixthChallengeValidNumericAssignmentAndPrintVariants_ReturnSuccess(
+            string playerInput
+        )
+        {
+            ValidationResult result = validator.Validate(sixthChallenge, playerInput);
+
+            Assert.That(result.IsSuccess, Is.True);
+            Assert.That(result.ConsoleOutput, Is.EqualTo("> 450"));
+            Assert.That(result.FeedbackMessage, Is.EqualTo(
+                "¡Correcto! Has completado el Módulo 1: Primer turno."
+            ));
+        }
+
+        [TestCase("precio_onigiri = \"450\"\nprint(precio_onigiri)")]
+        [TestCase("precio_onigiri = 450.0\nprint(precio_onigiri)")]
+        [TestCase("precio_onigiri = 450.00\nprint(precio_onigiri)")]
+        [TestCase("precio_onigiri = 4,50\nprint(precio_onigiri)")]
+        [TestCase("precio_onigiri = 45\nprint(precio_onigiri)")]
+        [TestCase("precio = 450\nprint(precio)")]
+        [TestCase("precio_onigiri == 450\nprint(precio_onigiri)")]
+        [TestCase("precio_onigiri = 450\nprint(\"450\")")]
+        [TestCase("precio_onigiri = 450\nprint(precio_bebida)")]
+        [TestCase("print(precio_onigiri)\nprecio_onigiri = 450")]
+        [TestCase("precio_onigiri = 450\nprint(precio_onigiri)\nprint(precio_onigiri)")]
+        [TestCase("# comentario\nprecio_onigiri = 450\nprint(precio_onigiri)")]
+        [TestCase("precio_onigiri = 450;\nprint(precio_onigiri)")]
+        [TestCase("precio_onigiri = 450\\nprint(precio_onigiri)")]
+        public void Validate_SixthChallengeInvalidNumericAssignmentAndPrintInputs_ReturnFailure(
+            string playerInput
+        )
+        {
+            ValidationResult result = validator.Validate(sixthChallenge, playerInput);
+
+            Assert.That(result.IsSuccess, Is.False);
+            Assert.That(result.FeedbackMessage, Is.Not.Empty);
+            Assert.That(result.ConsoleOutput, Does.Not.Contain("<color"));
+            Assert.That(result.ConsoleOutput, Does.Not.Contain("</color>"));
+        }
+
+        [Test]
+        public void Validate_SixthChallengeRichTextValue_DoesNotExposeMarkup()
+        {
+            ValidationResult result = validator.Validate(
+                sixthChallenge,
+                "precio_onigiri = <color=red>450</color>\nprint(precio_onigiri)"
+            );
+
+            Assert.That(result.IsSuccess, Is.False);
+            Assert.That(result.ConsoleOutput, Does.Not.Contain("<color"));
+            Assert.That(result.ConsoleOutput, Does.Not.Contain("</color>"));
+        }
+
+        [Test]
+        public void Validate_SixthChallengeOversizedInput_IsRejectedBeforePatternMatching()
+        {
+            string oversizedInput = new string('a', ChallengeValidator.MaxInputLength + 1);
+
+            ValidationResult result = validator.Validate(sixthChallenge, oversizedInput);
 
             Assert.That(result.IsSuccess, Is.False);
             Assert.That(result.ConsoleOutput, Is.EqualTo("> Error: instrucción demasiado larga."));

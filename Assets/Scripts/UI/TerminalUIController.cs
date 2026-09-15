@@ -146,10 +146,7 @@ namespace CyberConbini.UI
                 }
 
                 SetCrtScreenVisuals(successCrtEmission, successGlowColor, 0.8f);
-                SetNextChallengeAvailability(
-                    flowController.CanAdvance,
-                    flowController.IsCurrentChallengeCompleted
-                );
+                SetNextChallengeAvailability(flowController.CanAdvance);
             }
             else
             {

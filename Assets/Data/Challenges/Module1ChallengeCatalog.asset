@@ -82,3 +82,16 @@ MonoBehaviour:
       variableName: cliente
       expectedValue: Aiko
       valueKind: 0
+  - id: M1_R6
+    moduleId: M1
+    title: Precio del onigiri
+    prompt: 'El onigiri cuesta 450 yenes. Guarda su precio en una variable llamada precio_onigiri y luego muéstralo en la terminal.'
+    targetDisplayText: "precio_onigiri = 450\nprint(precio_onigiri)"
+    hint: 'Pista: los números no llevan comillas. Primero guarda 450 en precio_onigiri y luego usa print(precio_onigiri).'
+    expectedOutput: 450
+    successFeedback: "\xA1Correcto! Has completado el Módulo 1: Primer turno."
+    validationType: 2
+    rules:
+      variableName: precio_onigiri
+      expectedValue: 450
+      valueKind: 1

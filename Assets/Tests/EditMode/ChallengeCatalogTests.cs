@@ -9,7 +9,7 @@ namespace CyberConbini.Tests.EditMode
         private const string CatalogPath = "Assets/Data/Challenges/Module1ChallengeCatalog.asset";
 
         [Test]
-        public void Module1Catalog_LoadsFiveChallengesInOrder()
+        public void Module1Catalog_LoadsSixChallengesInOrder()
         {
             ChallengeCatalog catalog = AssetDatabase.LoadAssetAtPath<ChallengeCatalog>(CatalogPath);
 
@@ -17,12 +17,13 @@ namespace CyberConbini.Tests.EditMode
             Assert.That(catalog.ModuleId, Is.EqualTo("M1"));
             Assert.That(catalog.ModuleTitle, Is.EqualTo("Módulo 1 — Primer turno"));
             Assert.That(catalog.PlannedChallengeCount, Is.EqualTo(6));
-            Assert.That(catalog.ChallengeCount, Is.EqualTo(5));
+            Assert.That(catalog.ChallengeCount, Is.EqualTo(6));
             Assert.That(catalog.GetChallenge(0).Id, Is.EqualTo("M1_R1"));
             Assert.That(catalog.GetChallenge(1).Id, Is.EqualTo("M1_R2"));
             Assert.That(catalog.GetChallenge(2).Id, Is.EqualTo("M1_R3"));
             Assert.That(catalog.GetChallenge(3).Id, Is.EqualTo("M1_R4"));
             Assert.That(catalog.GetChallenge(4).Id, Is.EqualTo("M1_R5"));
+            Assert.That(catalog.GetChallenge(5).Id, Is.EqualTo("M1_R6"));
         }
 
         [Test]
@@ -176,6 +177,41 @@ namespace CyberConbini.Tests.EditMode
             Assert.That(challenge.Rules.VariableName, Is.EqualTo("cliente"));
             Assert.That(challenge.Rules.ExpectedValue, Is.EqualTo("Aiko"));
             Assert.That(challenge.Rules.ValueKind, Is.EqualTo(ChallengeValueKind.String));
+            Assert.That(challenge.HasRequiredData, Is.True);
+        }
+
+        [Test]
+        public void SixthChallenge_ContainsAllRequiredNumericAssignmentAndPrintData()
+        {
+            ChallengeCatalog catalog = AssetDatabase.LoadAssetAtPath<ChallengeCatalog>(CatalogPath);
+            Assert.That(catalog, Is.Not.Null);
+
+            ChallengeDefinition challenge = catalog.GetChallenge(5);
+
+            Assert.That(challenge, Is.Not.Null);
+            Assert.That(challenge.Id, Is.EqualTo("M1_R6"));
+            Assert.That(challenge.ModuleId, Is.EqualTo("M1"));
+            Assert.That(challenge.Title, Is.EqualTo("Precio del onigiri"));
+            Assert.That(challenge.Prompt, Is.EqualTo(
+                "El onigiri cuesta 450 yenes. Guarda su precio en una variable llamada precio_onigiri y luego muéstralo en la terminal."
+            ));
+            Assert.That(challenge.TargetDisplayText, Is.EqualTo(
+                "precio_onigiri = 450\nprint(precio_onigiri)"
+            ));
+            Assert.That(challenge.Hint, Is.EqualTo(
+                "Pista: los números no llevan comillas. Primero guarda 450 en precio_onigiri y luego usa print(precio_onigiri)."
+            ));
+            Assert.That(challenge.ExpectedOutput, Is.EqualTo("450"));
+            Assert.That(challenge.SuccessFeedback, Is.EqualTo(
+                "¡Correcto! Has completado el Módulo 1: Primer turno."
+            ));
+            Assert.That(challenge.ValidationType, Is.EqualTo(
+                ChallengeValidationType.VariableAssignmentAndPrint
+            ));
+            Assert.That(challenge.Rules, Is.Not.Null);
+            Assert.That(challenge.Rules.VariableName, Is.EqualTo("precio_onigiri"));
+            Assert.That(challenge.Rules.ExpectedValue, Is.EqualTo("450"));
+            Assert.That(challenge.Rules.ValueKind, Is.EqualTo(ChallengeValueKind.Number));
             Assert.That(challenge.HasRequiredData, Is.True);
         }
     }

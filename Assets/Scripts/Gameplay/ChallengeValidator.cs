@@ -39,6 +39,12 @@ namespace CyberConbini.Gameplay
             TimeSpan.FromMilliseconds(50)
         );
 
+        private static readonly Regex VariableAssignmentAndPrintNumberRegex = new Regex(
+            @"\A[ \t]*(?<assignName>[A-Za-z_][A-Za-z0-9_]*)[ \t]*=[ \t]*(?<assignValue>[0-9]+)[ \t]*\r?\n[ \t]*print[ \t]*\([ \t]*(?<printName>[A-Za-z_][A-Za-z0-9_]*)[ \t]*\)[ \t]*\z",
+            RegexOptions.CultureInvariant,
+            TimeSpan.FromMilliseconds(50)
+        );
+
         /// <summary>
         /// Valida el texto del jugador contra la regla controlada del reto.
         /// </summary>
@@ -208,7 +214,10 @@ namespace CyberConbini.Gameplay
 
             try
             {
-                match = VariableAssignmentAndPrintRegex.Match(trimmedInput);
+                Regex validationRegex = challenge.Rules.ValueKind == ChallengeValueKind.Number
+                    ? VariableAssignmentAndPrintNumberRegex
+                    : VariableAssignmentAndPrintRegex;
+                match = validationRegex.Match(trimmedInput);
             }
             catch (RegexMatchTimeoutException)
             {
