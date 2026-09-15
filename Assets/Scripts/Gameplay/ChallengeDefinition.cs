@@ -32,6 +32,7 @@ namespace CyberConbini.Gameplay
     public sealed class ChallengeDefinition
     {
         [SerializeField] private string id;
+        [SerializeField] private string moduleId;
         [SerializeField] private string title;
         [TextArea(2, 4)]
         [SerializeField] private string prompt;
@@ -45,6 +46,7 @@ namespace CyberConbini.Gameplay
         [SerializeField] private ChallengeValidationRules rules = new ChallengeValidationRules();
 
         public string Id => id;
+        public string ModuleId => moduleId;
         public string Title => title;
         public string Prompt => prompt;
         public string TargetDisplayText => targetDisplayText;
@@ -56,6 +58,7 @@ namespace CyberConbini.Gameplay
 
         public bool HasRequiredData =>
             !string.IsNullOrWhiteSpace(id) &&
+            !string.IsNullOrWhiteSpace(moduleId) &&
             !string.IsNullOrWhiteSpace(title) &&
             !string.IsNullOrWhiteSpace(prompt) &&
             !string.IsNullOrWhiteSpace(targetDisplayText) &&

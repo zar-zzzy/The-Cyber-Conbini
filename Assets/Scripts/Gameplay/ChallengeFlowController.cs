@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace CyberConbini.Gameplay
@@ -7,11 +9,27 @@ namespace CyberConbini.Gameplay
         [SerializeField] private ChallengeCatalog catalog;
         [SerializeField] private ChallengeValidator validator;
 
+        private readonly HashSet<string> completedChallengeIds =
+            new HashSet<string>(StringComparer.Ordinal);
+
         public ChallengeDefinition CurrentChallenge { get; private set; }
         public int CurrentIndex { get; private set; } = -1;
         public int PlannedChallengeCount => catalog != null ? catalog.PlannedChallengeCount : 0;
         public string ModuleTitle => catalog != null ? catalog.ModuleTitle : string.Empty;
         public bool IsInitialized => CurrentChallenge != null;
+        public bool CanAdvance
+        {
+            get
+            {
+                if (!IsInitialized || !IsChallengeCompleted(CurrentChallenge.Id))
+                {
+                    return false;
+                }
+
+                ChallengeDefinition nextChallenge = catalog.GetChallenge(CurrentIndex + 1);
+                return nextChallenge != null && nextChallenge.HasRequiredData;
+            }
+        }
 
         private void Awake()
         {
@@ -48,11 +66,38 @@ namespace CyberConbini.Gameplay
                 };
             }
 
-            return validator.Validate(CurrentChallenge, playerInput);
+            ValidationResult result = validator.Validate(CurrentChallenge, playerInput);
+
+            if (result.IsSuccess)
+            {
+                completedChallengeIds.Add(CurrentChallenge.Id);
+            }
+
+            return result;
+        }
+
+        public bool TryAdvance()
+        {
+            if (!CanAdvance)
+            {
+                return false;
+            }
+
+            CurrentIndex++;
+            CurrentChallenge = catalog.GetChallenge(CurrentIndex);
+            return true;
+        }
+
+        public bool IsChallengeCompleted(string challengeId)
+        {
+            return !string.IsNullOrEmpty(challengeId) &&
+                completedChallengeIds.Contains(challengeId);
         }
 
         private bool LoadFirstChallenge()
         {
+            completedChallengeIds.Clear();
+
             ChallengeDefinition firstChallenge = catalog != null
                 ? catalog.GetChallenge(0)
                 : null;

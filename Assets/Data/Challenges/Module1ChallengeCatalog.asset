@@ -17,6 +17,7 @@ MonoBehaviour:
   plannedChallengeCount: 6
   challenges:
   - id: M1_R1
+    moduleId: M1
     title: Saludo inicial
     prompt: 'El primer cliente ha llegado. Muestra el siguiente mensaje en la terminal:'
     targetDisplayText: Bienvenido al Cyber-Conbini
@@ -27,4 +28,18 @@ MonoBehaviour:
     rules:
       variableName: 
       expectedValue: Bienvenido al Cyber-Conbini
+      valueKind: 0
+  - id: M1_R2
+    moduleId: M1
+    title: Inicio de turno
+    prompt: "La tienda est\xE1 lista para atender. Muestra el siguiente mensaje en
+      la terminal:"
+    targetDisplayText: Turno nocturno iniciado
+    hint: 'Pista: usa print() y escribe el mensaje entre comillas.'
+    expectedOutput: Turno nocturno iniciado
+    successFeedback: "\xA1Correcto! El turno nocturno ha comenzado."
+    validationType: 0
+    rules:
+      variableName:
+      expectedValue: Turno nocturno iniciado
       valueKind: 0

@@ -45,6 +45,7 @@ namespace CyberConbini.UI
         [SerializeField] private Button buttonExecute;
         [SerializeField] private Button buttonHint;
         [SerializeField] private Button buttonReset;
+        [SerializeField] private Button buttonNextChallenge;
 
         [Header("Lógica")]
         [SerializeField] private ChallengeFlowController flowController;
@@ -95,6 +96,7 @@ namespace CyberConbini.UI
             if (buttonExecute != null) buttonExecute.onClick.AddListener(OnClickExecute);
             if (buttonHint != null) buttonHint.onClick.AddListener(OnClickHint);
             if (buttonReset != null) buttonReset.onClick.AddListener(OnClickReset);
+            if (buttonNextChallenge != null) buttonNextChallenge.onClick.AddListener(OnClickNextChallenge);
         }
 
         private void OnDestroy()
@@ -103,6 +105,7 @@ namespace CyberConbini.UI
             if (buttonExecute != null) buttonExecute.onClick.RemoveListener(OnClickExecute);
             if (buttonHint != null) buttonHint.onClick.RemoveListener(OnClickHint);
             if (buttonReset != null) buttonReset.onClick.RemoveListener(OnClickReset);
+            if (buttonNextChallenge != null) buttonNextChallenge.onClick.RemoveListener(OnClickNextChallenge);
         }
 
         /// <summary>
@@ -143,6 +146,7 @@ namespace CyberConbini.UI
                 }
 
                 SetCrtScreenVisuals(successCrtEmission, successGlowColor, 0.8f);
+                SetNextChallengeAvailability(flowController.CanAdvance);
             }
             else
             {
@@ -155,6 +159,7 @@ namespace CyberConbini.UI
                 }
 
                 SetCrtScreenVisuals(normalCrtEmission, normalGlowColor, 0.4f);
+                SetNextChallengeAvailability(false);
             }
         }
 
@@ -189,13 +194,17 @@ namespace CyberConbini.UI
         }
 
         /// <summary>
-        /// Método preparado para la futura expansión que desbloqueará el siguiente reto del módulo.
+        /// Avanza al siguiente reto disponible después de resolver el actual.
         /// </summary>
-        public void UnlockNextChallenge()
+        public void OnClickNextChallenge()
         {
+            if (flowController == null || !flowController.TryAdvance())
+            {
+                return;
+            }
+
+            ApplyCurrentChallengePresentation();
             ResetTerminalState();
-            // Lógica preparada para pasar al siguiente reto en futuras versiones
-            Debug.Log("[Terminal] Preparado para cargar el siguiente reto.");
         }
 
         private void ResetTerminalState()
@@ -216,7 +225,19 @@ namespace CyberConbini.UI
                 feedbackPanel.SetActive(false);
             }
 
+            SetNextChallengeAvailability(false);
             SetCrtScreenVisuals(normalCrtEmission, normalGlowColor, 0.4f);
+        }
+
+        private void SetNextChallengeAvailability(bool canAdvance)
+        {
+            if (buttonNextChallenge == null)
+            {
+                return;
+            }
+
+            buttonNextChallenge.interactable = canAdvance;
+            buttonNextChallenge.gameObject.SetActive(canAdvance);
         }
 
         private void ApplyCurrentChallengePresentation()

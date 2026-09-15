@@ -12,6 +12,7 @@ namespace CyberConbini.Tests.EditMode
         private GameObject testGameObject;
         private ChallengeValidator validator;
         private ChallengeDefinition challenge;
+        private ChallengeDefinition secondChallenge;
 
         [SetUp]
         public void SetUp()
@@ -22,6 +23,7 @@ namespace CyberConbini.Tests.EditMode
             testGameObject = new GameObject("ChallengeValidatorTests");
             validator = testGameObject.AddComponent<ChallengeValidator>();
             challenge = catalog.GetChallenge(0);
+            secondChallenge = catalog.GetChallenge(1);
         }
 
         [TearDown]
@@ -132,6 +134,31 @@ namespace CyberConbini.Tests.EditMode
             Assert.That(result.ConsoleOutput, Does.Not.Contain("<color"));
             Assert.That(result.ConsoleOutput, Does.Not.Contain("</color>"));
             Assert.That(result.ConsoleOutput, Does.Contain("&lt;color=red&gt;Hola&lt;/color&gt;"));
+        }
+
+        [TestCase("print(\"Turno nocturno iniciado\")")]
+        [TestCase("print('Turno nocturno iniciado')")]
+        [TestCase("print(  \"Turno nocturno iniciado\"  )")]
+        public void Validate_SecondChallengeValidPrintVariants_ReturnSuccess(string playerInput)
+        {
+            ValidationResult result = validator.Validate(secondChallenge, playerInput);
+
+            Assert.That(result.IsSuccess, Is.True);
+            Assert.That(result.ConsoleOutput, Is.EqualTo("> Turno nocturno iniciado"));
+            Assert.That(result.FeedbackMessage, Is.EqualTo(
+                "¡Correcto! El turno nocturno ha comenzado."
+            ));
+        }
+
+        [TestCase("print(\"Bienvenido al Cyber-Conbini\")")]
+        [TestCase("Turno nocturno iniciado")]
+        [TestCase("input(\"Turno nocturno iniciado\")")]
+        public void Validate_SecondChallengeInvalidInputs_ReturnFailure(string playerInput)
+        {
+            ValidationResult result = validator.Validate(secondChallenge, playerInput);
+
+            Assert.That(result.IsSuccess, Is.False);
+            Assert.That(result.FeedbackMessage, Is.Not.Empty);
         }
     }
 }
