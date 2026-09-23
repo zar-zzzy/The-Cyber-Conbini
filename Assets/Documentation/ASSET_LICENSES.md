@@ -5,7 +5,7 @@ Este documento contiene el historial y registro obligatorio de todos los recurso
 ---
 
 ## 1. Política de Uso de Recursos
-- **Cero Costo:** Únicamente se permite el uso de recursos gratuitos con licencias comerciales permisivas o de uso educativo irrestricto.
+- **Cero Costo:** Solo se integran recursos gratuitos cuya licencia permita su uso en el juego, respetando las condiciones particulares de cada fuente. "Gratis" no significa dominio público.
 - **Sin Assets de Pago:** No está permitido integrar ningún paquete comercial o de procedencia dudosa.
 - **Placeholders Prioritarios:** Durante las etapas de preproducción y MVP se priorizan primitivas 3D de Unity, materiales nativos con colores planos y efectos procedurales o generados en motor.
 
@@ -19,11 +19,22 @@ Este documento contiene el historial y registro obligatorio de todos los recurso
 | **Fuentes** | Fuentes por defecto TMP (Liberation Sans) | Unity Technologies | Integrada en TextMesh Pro | SIL Open Font License | Base UGUI |
 | **Audio** | Efectos de sonido placeholder | Equipo de Desarrollo | Generado / Sintetizado | Propia / CC0 | Planificado |
 | **Audio Música**| Lluvia y ambiente ASMR | Por definir | Por definir | CC0 / Permisiva | Pendiente de selección |
+| **Personajes 3D** | `Assets/CharacterPack Lowpoly (FREE)` | EMD Assets / elvismd | [Character Pack - Lowpoly FREE](https://assetstore.unity.com/packages/3d/characters/humanoids/character-pack-lowpoly-free-221766) | Standard Unity Asset Store EULA | Cliente integrado en `Conbini_Test`; sin animaciones |
+| **Comida 3D** | `Assets/ithappy/Food_Free` | ithappy | [Food FREE - Low Poly 3D Models Pack](https://assetstore.unity.com/packages/3d/props/food/food-free-low-poly-3d-models-pack-260726) | Standard Unity Asset Store EULA | Tres productos integrados en `Conbini_Test` |
+| **Animaciones** | `Assets/Kevin Iglesias/Human Animations` | Kevin Iglesias | [Human Basic Motions FREE](https://assetstore.unity.com/packages/3d/animations/human-basic-motions-free-154271) | Standard Unity Asset Store EULA | Importado; no integrado en la escena principal |
+| **Estanterías 3D** | `Assets/LowPolyMetalRack` | DigitalHakka | [Low Poly Metal Rack](https://assetstore.unity.com/packages/3d/props/furniture/low-poly-metal-rack-213045) | Standard Unity Asset Store EULA | Rack integrado en `Conbini_Test` |
+| **Muebles 3D** | `Assets/Low Poly Furniture` | Gobormu | [Low Poly Simple Furniture FREE](https://assetstore.unity.com/packages/3d/props/furniture/low-poly-simple-furniture-free-240197) | Standard Unity Asset Store EULA | Importado; no integrado en la escena principal |
+| **Partículas** | `Assets/Rain Particles` | Game Seed Assets | [Rain Particles](https://assetstore.unity.com/packages/vfx/particles/rain-particles-351846) | Standard Unity Asset Store EULA | Lluvia exterior integrada en `Conbini_Test` |
+| **Caja registradora 3D y textura** | `Assets/Art/Models/Props/CashRegister_Wayneer`; prefab y material propios en `Assets/Prefabs/CashRegister_Wayneer.prefab` y `Assets/Art/Materials/Mat_CashRegister_Wayneer.mat` | Wayneer | [Low Poly Cash Register](https://sketchfab.com/3d-models/low-poly-cash-register-42f7f90246e440f59438ad22b866f84e) | Creative Commons Attribution (CC BY; versión no especificada en la ficha) | Prefab integrado en `Conbini_Test` |
+
+**Atribución obligatoria de la caja:** "Low Poly Cash Register" por Wayneer, [Sketchfab](https://sketchfab.com/3d-models/low-poly-cash-register-42f7f90246e440f59438ad22b866f84e), licencia CC Attribution. En este proyecto se creó un prefab con escala adaptada y un material URP que reutiliza la textura original; el FBX y la textura no se modificaron.
+
+Los seis paquetes de Unity Asset Store se registran bajo la [EULA estándar de Unity](https://unity.com/legal/as-terms), no bajo CC0 ni una licencia de código abierto. La EULA permite incorporarlos como parte del juego bajo sus condiciones, pero no redistribuir los assets como recursos independientes. Antes de publicar un repositorio con los archivos fuente importados, verificar el acceso/licencia de cada colaborador y las condiciones de distribución aplicables.
 
 ---
 
 ## 3. Protocolo para Nuevas Incorporaciones
 Antes de agregar cualquier asset al proyecto:
-1. Validar que la licencia permita redistribución y modificación sin regalías (ej. CC0, CC-BY, MIT).
+1. Validar que la licencia permita la integración y distribución del juego; distinguir este permiso de la redistribución de los archivos fuente del asset.
 2. Añadir la fila correspondiente en la tabla anterior especificando origen y autor.
-3. Almacenar el archivo de licencia o enlace en la carpeta de origen del recurso.
+3. Conservar el archivo de licencia de origen si existe y registrar un enlace verificable en esta tabla.
