@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/Conbini_Main.unity
+    guid: 5044e746e7edad94d8ff28f1b3daad4a
+  - enabled: 1
     path: Assets/Scenes/Conbini_Test.unity
     guid: 107326db5ace8d34ca85cc3273578678
   - enabled: 1
