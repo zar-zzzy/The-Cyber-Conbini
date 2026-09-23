@@ -2,7 +2,8 @@
   "name": "CyberConbini.EditModeTests",
   "rootNamespace": "CyberConbini.Tests.EditMode",
   "references": [
-    "CyberConbini.Runtime"
+    "CyberConbini.Runtime",
+    "Unity.TextMeshPro"
   ],
   "includePlatforms": [
     "Editor"
