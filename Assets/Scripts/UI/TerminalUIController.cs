@@ -57,6 +57,17 @@ namespace CyberConbini.UI
         [Tooltip("Luz puntual de brillo de la pantalla CRT")]
         [SerializeField] private Light crtGlowLight;
 
+        [Tooltip("Luz breve sobre el producto al resolver un reto")]
+        [SerializeField] private Light scannerSuccessLight;
+
+        [SerializeField, Min(0.01f)] private float scannerFlashDuration = 0.45f;
+        [SerializeField, Min(0f)] private float scannerFlashIntensity = 3f;
+
+        [Tooltip("Raíz del cliente para un asentimiento breve al acertar")]
+        [SerializeField] private Transform customerReactionTarget;
+        [SerializeField, Min(0.01f)] private float customerNodDuration = 0.65f;
+        [SerializeField, Min(0f)] private float customerNodAngle = 5f;
+
         [Header("Paleta de Color de Feedback")]
         [SerializeField] private Color colorSuccess = new Color(0.20f, 0.85f, 0.55f, 0.95f); // Verde menta
         [SerializeField] private Color colorError = new Color(0.95f, 0.75f, 0.25f, 0.95f);   // Amarillo suave / ámbar
@@ -69,6 +80,9 @@ namespace CyberConbini.UI
         private Color successGlowColor = new Color(0.25f, 1.0f, 0.70f);
 
         private MaterialPropertyBlock crtPropertyBlock;
+        private float scannerFlashRemaining;
+        private float customerNodRemaining;
+        private Quaternion customerNormalRotation;
 
         private void Awake()
         {
@@ -78,6 +92,10 @@ namespace CyberConbini.UI
             }
 
             CacheNormalCrtEmission();
+            if (customerReactionTarget != null)
+            {
+                customerNormalRotation = customerReactionTarget.localRotation;
+            }
         }
 
         private void Start()
@@ -97,6 +115,24 @@ namespace CyberConbini.UI
             if (buttonHint != null) buttonHint.onClick.AddListener(OnClickHint);
             if (buttonReset != null) buttonReset.onClick.AddListener(OnClickReset);
             if (buttonNextChallenge != null) buttonNextChallenge.onClick.AddListener(OnClickNextChallenge);
+        }
+
+        private void Update()
+        {
+            if (scannerSuccessLight != null && scannerFlashRemaining > 0f)
+            {
+                scannerFlashRemaining = Mathf.Max(0f, scannerFlashRemaining - Time.deltaTime);
+                scannerSuccessLight.intensity = scannerFlashIntensity *
+                    (scannerFlashRemaining / Mathf.Max(0.01f, scannerFlashDuration));
+            }
+
+            if (customerReactionTarget != null && customerNodRemaining > 0f)
+            {
+                customerNodRemaining = Mathf.Max(0f, customerNodRemaining - Time.deltaTime);
+                float progress = 1f - customerNodRemaining / Mathf.Max(0.01f, customerNodDuration);
+                float angle = Mathf.Sin(progress * Mathf.PI) * customerNodAngle;
+                customerReactionTarget.localRotation = customerNormalRotation * Quaternion.Euler(angle, 0f, 0f);
+            }
         }
 
         private void OnDestroy()
@@ -146,6 +182,12 @@ namespace CyberConbini.UI
                 }
 
                 SetCrtScreenVisuals(successCrtEmission, successGlowColor, 0.8f);
+                if (scannerSuccessLight != null)
+                {
+                    scannerFlashRemaining = Mathf.Max(0.01f, scannerFlashDuration);
+                    scannerSuccessLight.intensity = scannerFlashIntensity;
+                }
+                customerNodRemaining = Mathf.Max(0.01f, customerNodDuration);
                 SetNextChallengeAvailability(flowController.CanAdvance);
             }
             else
@@ -159,6 +201,8 @@ namespace CyberConbini.UI
                 }
 
                 SetCrtScreenVisuals(normalCrtEmission, normalGlowColor, 0.4f);
+                ResetScannerFlash();
+                ResetCustomerNod();
                 SetNextChallengeAvailability(false);
             }
         }
@@ -227,6 +271,26 @@ namespace CyberConbini.UI
 
             SetNextChallengeAvailability(false);
             SetCrtScreenVisuals(normalCrtEmission, normalGlowColor, 0.4f);
+            ResetScannerFlash();
+            ResetCustomerNod();
+        }
+
+        private void ResetScannerFlash()
+        {
+            scannerFlashRemaining = 0f;
+            if (scannerSuccessLight != null)
+            {
+                scannerSuccessLight.intensity = 0f;
+            }
+        }
+
+        private void ResetCustomerNod()
+        {
+            customerNodRemaining = 0f;
+            if (customerReactionTarget != null)
+            {
+                customerReactionTarget.localRotation = customerNormalRotation;
+            }
         }
 
         private void SetNextChallengeAvailability(bool canAdvance, bool showWhenCompleted = false)

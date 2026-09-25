@@ -1,41 +1,41 @@
-# Visión General: The Cyber-Conbini
+# GDD breve — The Cyber-Conbini
 
-## 1. Concepto y Pilares de Diseño
-**The Cyber-Conbini** es una experiencia inmersiva en primera persona que fusiona la estética nostálgica y relajante de una tienda de conveniencia japonesa (*Conbini*) bajo una lluvia nocturna en Tokio, con la resolución de retos de lógica de programación y automatización.
+## Concepto y objetivo
 
-### Pilares Fundamentales:
-1. **Posición Fija e Inmersión Contenida:** El jugador no camina ni combate. Se ubica de forma fija tras el mostrador de atención. Toda la interacción del mundo ocurre a través de su punto de vista y su consola.
-2. **Pedagogía Visual y Contextual:** Cada concepto de programación resuelve una necesidad tangible del negocio (atender a un cliente, fijar el precio de un bento, discriminar entre un cliente y una mascota).
-3. **Atmósfera Acogedora (ASMR & Lo-Fi):** Lluvia constante en los ventanales, luces de neón tenues reflejadas en el asfalto y el suelo, pitidos sutiles de la caja registradora y el tecleo de la terminal.
-4. **Retroalimentación Determinística Inmediata:** Respuestas claras de éxito o error con pistas contextuales que guían al aprendiz sin frustrarlo.
+Juego educativo 3D situado en la caja de un conbini nocturno. El jugador atiende al primer cliente resolviendo instrucciones de sintaxis Python didáctica. La meta de la demo es completar los seis retos del Módulo 1, «Primer turno».
 
----
+## Pilares de la demo
 
-## 2. Bucle de Juego (Core Loop)
-```text
-[Cliente / Evento Llega] 
-        ↓
-[Presentación del Reto en Pantalla de la Terminal]
-        ↓
-[El Jugador Escribe / Selecciona la Solución]
-        ↓
-[Presionar "Ejecutar" / Validación Interna C#]
-        ↓
-[Éxito: Reacción 3D (Luz verde, Sonido, Avance) / Error: Pista Didáctica]
-        ↓
-[Transición al Siguiente Reto o Cliente]
-```
+- **Punto de vista fijo:** el jugador permanece detrás del mostrador. `E` acerca la cámara a la terminal y `Escape` vuelve a la caja; el borrador escrito se conserva.
+- **Aprendizaje contextual:** cada instrucción atiende una necesidad concreta de la tienda. La dificultad avanza de imprimir un literal a guardar e imprimir variables de texto y número.
+- **Feedback claro:** la terminal indica el resultado, ofrece pista y reinicio; al acertar, el CRT, la luz de escáner y el cliente reaccionan visualmente.
+- **Atmósfera nocturna:** cliente, productos y estantería visibles, iluminación de tienda y lluvia exterior. El audio ASMR es una intención de diseño, no una función presente en esta build.
 
----
+## Bucle jugable
 
-## 3. Plan de Progresión Curricular (Enfoque Python Didáctico)
-1. **Nivel 1: Salida de Datos (`print("...")`)**
-   - Reto: Mostrar mensaje de bienvenida al cliente en la terminal (`print("Bienvenido")` / `print("Irasshaimase")`).
-2. **Nivel 2: Variables y Tipos Básicos**
-   - Reto: Asignar nombre del cajero, nombre del producto (`string`) y precio (`int`/`float`).
-3. **Nivel 3: Operaciones Aritméticas**
-   - Reto: Sumar artículos, calcular el vuelto/cambio y multiplicar por cantidad.
-4. **Nivel 4: Estructuras Condicionales (`if / else`)**
-   - Reto: Verificar si el cliente es mayor de edad para comprar tabaco, o no abrir la puerta automática si se detecta un gato callejero bajo la lluvia.
-5. **Niveles Futuros (Post-MVP):**
-   - Bucles para calcular el inventario de estanterías, funciones de caja y automatización de reabastecimiento.
+1. Leer el enunciado y el texto objetivo en la terminal.
+2. Escribir una instrucción y pulsar **EJECUTAR**.
+3. Leer la salida y el feedback. Si falla, consultar **PISTA**, corregir o usar **REINICIAR**.
+4. Si acierta, pulsar **SIGUIENTE RETO** cuando exista otro reto en el catálogo.
+5. En R6, la salida `450` y el feedback final cierran el Módulo 1. No hay R7.
+
+## Progresión implementada
+
+| Reto | Nombre | Concepto | Ejemplo válido |
+| :--- | :--- | :--- | :--- |
+| M1_R1 | Saludo inicial | `print()` de texto | `print("Bienvenido al Cyber-Conbini")` |
+| M1_R2 | Inicio de turno | `print()` de texto | `print("Turno nocturno iniciado")` |
+| M1_R3 | Producto en caja | `print()` de texto | `print("Onigiri de salmón")` |
+| M1_R4 | Guardar cliente | Variable de texto | `cliente = "Aiko"` |
+| M1_R5 | Mostrar cliente | Asignar e imprimir texto | `cliente = "Aiko"` y, en la siguiente línea, `print(cliente)` |
+| M1_R6 | Precio del onigiri | Asignar e imprimir número | `precio_onigiri = 450` y, en la siguiente línea, `print(precio_onigiri)` |
+
+Los datos viven en `Assets/Data/Challenges/Module1ChallengeCatalog.asset`. `ChallengeFlowController` gestiona el reto actual y `ChallengeValidator` valida solo los patrones permitidos en C#. No se ejecuta Python, no hay evaluación dinámica y la entrada está limitada antes de analizarla.
+
+## Escena y presentación
+
+`Assets/Scenes/Conbini_Main.unity` es la escena inicial de la build. La UI conserva el contador «Reto X de 6», enunciado, objetivo, campo de código, botones y consola. El zoom cambia la cámara, no la progresión del reto. El éxito activa el brillo CRT temporal mediante `MaterialPropertyBlock`; no altera el material compartido.
+
+## Fuera del alcance actual
+
+No hay movimiento libre, inventario, guardado, economía, operaciones aritméticas, condicionales, bucles ni nuevos módulos. Los sonidos ASMR aún deben seleccionarse o producirse; esta demo se presenta en silencio. La experiencia sonora y las mecánicas futuras requieren aprobación y pruebas propias.

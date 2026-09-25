@@ -1,0 +1,20 @@
+{
+  "name": "CyberConbini.PlayModeTests",
+  "rootNamespace": "CyberConbini.Tests.PlayMode",
+  "references": [
+    "CyberConbini.Runtime",
+    "Unity.TextMeshPro"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false,
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ]
+}

@@ -80,6 +80,12 @@ namespace CyberConbini.UI
             CurrentState = TerminalExperienceState.CashierView;
             transitionElapsed = 0f;
 
+            if (terminalInputField != null)
+            {
+                terminalInputField.restoreOriginalTextOnEscape = false;
+                terminalInputField.resetOnDeActivation = false;
+            }
+
             if (HasRequiredCameraReferences())
             {
                 ApplyView(cashierCameraPoint, cashierFieldOfView);
@@ -114,6 +120,17 @@ namespace CyberConbini.UI
             )
             {
                 return false;
+            }
+
+            if (terminalInputField != null)
+            {
+                terminalInputField.DeactivateInputField();
+                EventSystem eventSystem = EventSystem.current;
+                if (eventSystem != null &&
+                    eventSystem.currentSelectedGameObject == terminalInputField.gameObject)
+                {
+                    eventSystem.SetSelectedGameObject(null);
+                }
             }
 
             BeginTransition(TerminalExperienceState.ReturningToCashier);
@@ -164,6 +181,13 @@ namespace CyberConbini.UI
             CurrentState = isEntering
                 ? TerminalExperienceState.TerminalView
                 : TerminalExperienceState.CashierView;
+
+            if (isEntering && terminalInputField != null &&
+                terminalInputField.isActiveAndEnabled && terminalInputField.interactable)
+            {
+                terminalInputField.Select();
+                terminalInputField.ActivateInputField();
+            }
         }
 
         private void BeginTransition(TerminalExperienceState transitionState)

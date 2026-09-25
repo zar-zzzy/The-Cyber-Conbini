@@ -183,6 +183,18 @@ namespace CyberConbini.Tests.EditMode
             Assert.That(mainCamera.fieldOfView, Is.EqualTo(60f).Within(FieldOfViewTolerance));
         }
 
+        [Test]
+        public void Initialize_DisablesInputDraftRestorationOnEscapeAndDeactivation()
+        {
+            inputField.restoreOriginalTextOnEscape = true;
+            inputField.resetOnDeActivation = true;
+
+            controller.Initialize();
+
+            Assert.That(inputField.restoreOriginalTextOnEscape, Is.False);
+            Assert.That(inputField.resetOnDeActivation, Is.False);
+        }
+
         private void EnterTerminalImmediately()
         {
             Assert.That(controller.RequestEnterTerminal(), Is.True);
