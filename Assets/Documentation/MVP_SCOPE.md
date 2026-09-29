@@ -9,6 +9,7 @@ Esta demo permite completar el primer turno desde una posición fija en la caja 
 - Catálogo de seis retos M1_R1–M1_R6 en orden, con pista, salida, feedback, reinicio y avance solo cuando existe el siguiente reto.
 - Validador determinístico en C# para `print()` de un literal, asignación de una variable de texto y asignación seguida de `print()` de texto o número.
 - Feedback visual: emisión CRT temporal, luz breve de escáner y movimiento sencillo del cliente al acertar.
+- Una visita completa: entrada por puerta deslizante, elección de un onigiri, espera en caja durante los seis retos y salida con la compra tras resolver R6. Recorrido guiado con animaciones del paquete existente e IK; sin nuevos paquetes ni audio.
 - Pruebas Edit Mode y Play Mode, y build Windows local.
 
 ## No incluido
@@ -20,4 +21,4 @@ Esta demo permite completar el primer turno desde una posición fija en la caja 
 
 ## Criterio de demo
 
-El jugador puede abrir la terminal, resolver los seis retos, recibir feedback visual, volver con `Escape` sin perder lo escrito y terminar en R6 sin botón para un R7 inexistente. El resultado debe compilar y ejecutarse en Windows sin errores de proyecto.
+El jugador ve llegar al cliente, puede abrir la terminal, resolver los seis retos, recibir feedback visual y volver con `Escape` sin perder lo escrito. Resolver R6 inicia la despedida y devuelve la cámara a caja; el cierre del módulo aparece después de que el cliente sale con su compra, sin botón para un R7 inexistente. La visita no se repite automáticamente. El resultado debe compilar y ejecutarse en Windows sin errores de proyecto.

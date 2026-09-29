@@ -39,6 +39,9 @@ namespace CyberConbini.UI
         private Quaternion transitionStartRotation;
         private float transitionStartFieldOfView;
         private float transitionElapsed;
+        private bool terminalEntryAllowed = true;
+
+        public void SetTerminalEntryAllowed(bool allowed) => terminalEntryAllowed = allowed;
 
         public TerminalExperienceState CurrentState { get; private set; } =
             TerminalExperienceState.CashierView;
@@ -100,7 +103,7 @@ namespace CyberConbini.UI
         public bool RequestEnterTerminal(bool inputFieldHasFocus)
         {
             if (
-                CurrentState != TerminalExperienceState.CashierView ||
+                !terminalEntryAllowed || CurrentState != TerminalExperienceState.CashierView ||
                 inputFieldHasFocus ||
                 !HasRequiredCameraReferences()
             )

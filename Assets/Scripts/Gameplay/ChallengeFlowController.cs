@@ -17,6 +17,9 @@ namespace CyberConbini.Gameplay
         public int PlannedChallengeCount => catalog != null ? catalog.PlannedChallengeCount : 0;
         public string ModuleTitle => catalog != null ? catalog.ModuleTitle : string.Empty;
         public bool IsInitialized => CurrentChallenge != null;
+        public bool AreAllChallengesCompleted => IsInitialized && catalog.Challenges.Count > 0 &&
+            completedChallengeIds.Count == catalog.Challenges.Count;
+        public event Action AllChallengesCompleted;
         public bool IsCurrentChallengeCompleted =>
             IsInitialized && IsChallengeCompleted(CurrentChallenge.Id);
         public bool CanAdvance
@@ -72,7 +75,11 @@ namespace CyberConbini.Gameplay
 
             if (result.IsSuccess)
             {
-                completedChallengeIds.Add(CurrentChallenge.Id);
+                bool newlyCompleted = completedChallengeIds.Add(CurrentChallenge.Id);
+                if (newlyCompleted && AreAllChallengesCompleted)
+                {
+                    AllChallengesCompleted?.Invoke();
+                }
             }
 
             return result;

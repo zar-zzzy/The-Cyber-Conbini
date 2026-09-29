@@ -75,14 +75,45 @@ namespace CyberConbini.UI
 
         // Colores y estados base de la pantalla CRT
         private Color normalCrtEmission = new Color(0.04f, 0.30f, 0.10f);
-        private Color successCrtEmission = new Color(0.20f, 1.0f, 0.65f);
-        private Color normalGlowColor = new Color(0.1f, 0.9f, 0.3f);
-        private Color successGlowColor = new Color(0.25f, 1.0f, 0.70f);
+        [SerializeField] private Color successCrtEmission = new Color(0.06f, 0.09f, 0.16f);
+        [SerializeField] private Color normalGlowColor = new Color(0.48f, 0.64f, 0.97f);
+        [SerializeField] private Color successGlowColor = new Color(0.49f, 0.81f, 1.0f);
+        [SerializeField, Min(0f)] private float normalGlowIntensity = 0.035f;
+        [SerializeField, Min(0f)] private float successGlowIntensity = 0.075f;
 
         private MaterialPropertyBlock crtPropertyBlock;
         private float scannerFlashRemaining;
         private float customerNodRemaining;
         private Quaternion customerNormalRotation;
+        private bool visitInteractionAllowed = true;
+        private bool visitControlsClosure;
+
+        public bool VisitInteractionAllowed => visitInteractionAllowed;
+
+        public void SetVisitInteractionAllowed(bool allowed)
+        {
+            visitInteractionAllowed = allowed;
+            visitControlsClosure = true;
+            if (buttonExecute != null) buttonExecute.interactable = allowed;
+            if (buttonHint != null) buttonHint.interactable = allowed;
+            if (buttonReset != null) buttonReset.interactable = allowed;
+            SetNextChallengeAvailability(allowed && flowController != null && flowController.CanAdvance);
+        }
+
+        public void SetVisitStatus(string message)
+        {
+            if (consoleOutputText != null) consoleOutputText.text = message;
+        }
+
+        public void ShowVisitCompleted()
+        {
+            SetVisitInteractionAllowed(false);
+            if (progressText != null) progressText.text = "Módulo completado";
+            if (feedbackPanel != null) feedbackPanel.SetActive(true);
+            if (feedbackMessageText != null)
+                feedbackMessageText.text = "Cliente atendido. ¡Has completado tu primer turno!";
+            if (feedbackBackground != null) feedbackBackground.color = colorSuccess;
+        }
 
         private void Awake()
         {
@@ -149,6 +180,7 @@ namespace CyberConbini.UI
         /// </summary>
         public void OnClickExecute()
         {
+            if (!visitInteractionAllowed) return;
             if (inputField == null || flowController == null || !flowController.IsInitialized) return;
 
             string code = inputField.text;
@@ -168,7 +200,9 @@ namespace CyberConbini.UI
 
             if (feedbackMessageText != null)
             {
-                feedbackMessageText.text = result.FeedbackMessage;
+                feedbackMessageText.text = result.IsSuccess && visitControlsClosure && flowController.AreAllChallengesCompleted
+                    ? "¡Correcto! Compra registrada. El cliente recoge su pedido..."
+                    : result.FeedbackMessage;
             }
 
             if (result.IsSuccess)
@@ -181,7 +215,7 @@ namespace CyberConbini.UI
                     feedbackBackground.color = colorSuccess;
                 }
 
-                SetCrtScreenVisuals(successCrtEmission, successGlowColor, 0.8f);
+                SetCrtScreenVisuals(successCrtEmission, successGlowColor, successGlowIntensity);
                 if (scannerSuccessLight != null)
                 {
                     scannerFlashRemaining = Mathf.Max(0.01f, scannerFlashDuration);
@@ -200,7 +234,7 @@ namespace CyberConbini.UI
                     feedbackBackground.color = colorError;
                 }
 
-                SetCrtScreenVisuals(normalCrtEmission, normalGlowColor, 0.4f);
+                SetCrtScreenVisuals(normalCrtEmission, normalGlowColor, normalGlowIntensity);
                 ResetScannerFlash();
                 ResetCustomerNod();
                 SetNextChallengeAvailability(false);
@@ -212,6 +246,7 @@ namespace CyberConbini.UI
         /// </summary>
         public void OnClickHint()
         {
+            if (!visitInteractionAllowed) return;
             if (feedbackPanel != null)
             {
                 feedbackPanel.SetActive(true);
@@ -234,6 +269,7 @@ namespace CyberConbini.UI
         /// </summary>
         public void OnClickReset()
         {
+            if (!visitInteractionAllowed) return;
             ResetTerminalState();
         }
 
@@ -242,6 +278,7 @@ namespace CyberConbini.UI
         /// </summary>
         public void OnClickNextChallenge()
         {
+            if (!visitInteractionAllowed) return;
             if (flowController == null || !flowController.TryAdvance())
             {
                 return;
@@ -270,7 +307,7 @@ namespace CyberConbini.UI
             }
 
             SetNextChallengeAvailability(false);
-            SetCrtScreenVisuals(normalCrtEmission, normalGlowColor, 0.4f);
+            SetCrtScreenVisuals(normalCrtEmission, normalGlowColor, normalGlowIntensity);
             ResetScannerFlash();
             ResetCustomerNod();
         }

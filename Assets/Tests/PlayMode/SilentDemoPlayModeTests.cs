@@ -24,6 +24,7 @@ namespace CyberConbini.Tests.PlayMode
         {
             SceneManager.LoadScene("Conbini_Main", LoadSceneMode.Single);
             yield return null;
+            yield return CustomerVisitPlayModeTests.WaitForCheckout();
 
             TerminalUIController terminal = Object.FindAnyObjectByType<TerminalUIController>();
             TMP_InputField input = GameObject.Find("Input_Panel")?.GetComponent<TMP_InputField>();
@@ -32,6 +33,7 @@ namespace CyberConbini.Tests.PlayMode
 
             input.text = "print(\"Bienvenido al Cyber-Conbini\")";
             terminal.OnClickExecute();
+            Assert.That(Object.FindAnyObjectByType<CyberConbini.Gameplay.ChallengeFlowController>().IsCurrentChallengeCompleted, Is.True);
 
             AssertNoPlayingAudio();
         }

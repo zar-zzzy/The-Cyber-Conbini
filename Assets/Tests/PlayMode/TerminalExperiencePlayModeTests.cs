@@ -59,6 +59,7 @@ namespace CyberConbini.Tests.PlayMode
         [UnityTest]
         public IEnumerator AllModuleOnePromptsAndTargets_FitTerminalPanel()
         {
+            yield return CustomerVisitPlayModeTests.WaitForCheckout();
             string[] solutions =
             {
                 "print(\"Bienvenido al Cyber-Conbini\")",

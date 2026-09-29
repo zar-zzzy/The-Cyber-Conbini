@@ -21,11 +21,12 @@ namespace CyberConbini.Tests.PlayMode
         {
             SceneManager.LoadScene("Conbini_Main", LoadSceneMode.Single);
             yield return null;
+            yield return CustomerVisitPlayModeTests.WaitForCheckout();
 
             terminal = Object.FindAnyObjectByType<TerminalUIController>();
             inputField = GameObject.Find("Input_Panel")?.GetComponent<TMP_InputField>();
             scannerLight = GameObject.Find("Light_Scanner_Success")?.GetComponent<Light>();
-            customer = GameObject.Find("Customer")?.transform;
+            customer = GameObject.Find("Customer_Visual")?.transform;
 
             Assert.That(terminal, Is.Not.Null);
             Assert.That(inputField, Is.Not.Null);
