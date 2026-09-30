@@ -10,6 +10,7 @@ Esta demo permite completar el primer turno desde una posición fija en la caja 
 - Validador determinístico en C# para `print()` de un literal, asignación de una variable de texto y asignación seguida de `print()` de texto o número.
 - Feedback visual: emisión CRT temporal, luz breve de escáner y movimiento sencillo del cliente al acertar.
 - Una visita completa: entrada por puerta deslizante, elección de un onigiri, espera en caja durante los seis retos y salida con la compra tras resolver R6. Recorrido guiado con animaciones del paquete existente e IK; sin nuevos paquetes ni audio.
+- Inicio con comienzo explícito del turno, guía de controles, pausa desde caja con confirmaciones, pista compacta dinámica y recibo tras la salida con opciones para repetir o volver al inicio.
 - Pruebas Edit Mode y Play Mode, y build Windows local.
 
 ## No incluido

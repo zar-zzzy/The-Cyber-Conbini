@@ -15,6 +15,7 @@ namespace CyberConbini.Tests.PlayMode
         {
             SceneManager.LoadScene("Conbini_Main", LoadSceneMode.Single);
             yield return null;
+            Object.FindAnyObjectByType<VisitWindowController>()?.BeginShift();
         }
 
         [UnityTest]

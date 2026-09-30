@@ -20,6 +20,7 @@ namespace CyberConbini.Tests.PlayMode
         {
             SceneManager.LoadScene("Conbini_Main", LoadSceneMode.Single);
             yield return null;
+            Object.FindAnyObjectByType<VisitWindowController>()?.BeginShift();
 
             controller = Object.FindAnyObjectByType<TerminalExperienceController>();
             inputField = GameObject.Find("Input_Panel").GetComponent<TMP_InputField>();

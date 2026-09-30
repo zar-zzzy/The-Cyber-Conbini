@@ -39,3 +39,12 @@ Antes de agregar cualquier asset al proyecto:
 1. Validar que la licencia permita la integración y distribución del juego; distinguir este permiso de la redistribución de los archivos fuente del asset.
 2. Añadir la fila correspondiente en la tabla anterior especificando origen y autor.
 3. Conservar el archivo de licencia de origen si existe y registrar un enlace verificable en esta tabla.
+
+
+## UI de ventanas — Kenney Sci-Fi (2026-09-30)
+
+- Autor: **Kenney**. Recurso: **UI Pack - Sci-Fi**.
+- Fuente oficial verificada: https://kenney.nl/assets/ui-pack-sci-fi
+- Licencia indicada por el autor: **Creative Commons CC0**; permite integrar y adaptar los gráficos, también en proyectos comerciales. Atribución opcional: UI assets by Kenney.nl (CC0).
+- Archivos suministrados por el usuario en Assets/UI/Sprites/Kenney_SciFi. Se reutiliza una selección de paneles y botones PNG; no se descargaron recursos adicionales. La carpeta proporcionada no incluía un archivo de licencia; se registra la ficha oficial consultada.
+- Ajustes: importación Sprite Single, bordes para escalado en nueve partes y tinte desde UGUI. PNG originales intactos.

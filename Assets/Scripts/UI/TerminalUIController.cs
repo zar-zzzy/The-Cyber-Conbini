@@ -87,6 +87,10 @@ namespace CyberConbini.UI
         private Quaternion customerNormalRotation;
         private bool visitInteractionAllowed = true;
         private bool visitControlsClosure;
+        private bool modalInputBlocked;
+
+        public event System.Action<string> HintRequested;
+        public void SetModalInputBlocked(bool blocked) => modalInputBlocked = blocked;
 
         public bool VisitInteractionAllowed => visitInteractionAllowed;
 
@@ -180,7 +184,7 @@ namespace CyberConbini.UI
         /// </summary>
         public void OnClickExecute()
         {
-            if (!visitInteractionAllowed) return;
+            if (!visitInteractionAllowed || modalInputBlocked) return;
             if (inputField == null || flowController == null || !flowController.IsInitialized) return;
 
             string code = inputField.text;
@@ -246,7 +250,13 @@ namespace CyberConbini.UI
         /// </summary>
         public void OnClickHint()
         {
-            if (!visitInteractionAllowed) return;
+            if (!visitInteractionAllowed || modalInputBlocked) return;
+            if (HintRequested != null)
+            {
+                HintRequested.Invoke(flowController != null && flowController.CurrentChallenge != null
+                    ? flowController.CurrentChallenge.Hint : string.Empty);
+                return;
+            }
             if (feedbackPanel != null)
             {
                 feedbackPanel.SetActive(true);
@@ -269,7 +279,7 @@ namespace CyberConbini.UI
         /// </summary>
         public void OnClickReset()
         {
-            if (!visitInteractionAllowed) return;
+            if (!visitInteractionAllowed || modalInputBlocked) return;
             ResetTerminalState();
         }
 
@@ -278,7 +288,7 @@ namespace CyberConbini.UI
         /// </summary>
         public void OnClickNextChallenge()
         {
-            if (!visitInteractionAllowed) return;
+            if (!visitInteractionAllowed || modalInputBlocked) return;
             if (flowController == null || !flowController.TryAdvance())
             {
                 return;

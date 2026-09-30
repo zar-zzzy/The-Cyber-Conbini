@@ -93,6 +93,7 @@ namespace CyberConbini.Tests.PlayMode
 
         internal static IEnumerator WaitForCheckout()
         {
+            Object.FindAnyObjectByType<VisitWindowController>()?.BeginShift();
             var visit = Object.FindAnyObjectByType<CustomerVisitController>();
             Assert.That(visit, Is.Not.Null);
             float deadline = Time.realtimeSinceStartup + 30f;

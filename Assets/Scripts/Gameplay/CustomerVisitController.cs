@@ -38,6 +38,10 @@ namespace CyberConbini.Gameplay
         private bool carrying;
         private bool saleReady;
         private bool configured;
+        [SerializeField] private bool waitForBegin;
+        private bool visitStarted;
+
+        public void BeginVisit() => visitStarted = true;
         public CustomerVisitState State { get; private set; }
         public bool IsReadyForCheckout => State == CustomerVisitState.WaitingAtCheckout;
         public bool IsModuleClosed => State == CustomerVisitState.Completed;
@@ -81,6 +85,7 @@ namespace CyberConbini.Gameplay
         private IEnumerator Start()
         {
             if (!configured) yield break;
+            yield return new WaitUntil(() => !waitForBegin || visitStarted);
             yield return null; // The terminal has initialized its challenge presentation.
             terminal.SetVisitStatus("> Un cliente entra en la tienda...");
             yield return new WaitForSeconds(.6f);

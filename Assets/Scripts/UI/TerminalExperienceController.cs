@@ -40,6 +40,9 @@ namespace CyberConbini.UI
         private float transitionStartFieldOfView;
         private float transitionElapsed;
         private bool terminalEntryAllowed = true;
+        private bool uiInputBlocked;
+
+        public void SetUIInputBlocked(bool blocked) => uiInputBlocked = blocked;
 
         public void SetTerminalEntryAllowed(bool allowed) => terminalEntryAllowed = allowed;
 
@@ -63,7 +66,7 @@ namespace CyberConbini.UI
         private void OnGUI()
         {
             Event keyboardEvent = Event.current;
-            if (keyboardEvent == null || keyboardEvent.type != EventType.KeyDown)
+            if (uiInputBlocked || keyboardEvent == null || keyboardEvent.type != EventType.KeyDown)
             {
                 return;
             }
@@ -103,7 +106,7 @@ namespace CyberConbini.UI
         public bool RequestEnterTerminal(bool inputFieldHasFocus)
         {
             if (
-                !terminalEntryAllowed || CurrentState != TerminalExperienceState.CashierView ||
+                uiInputBlocked || !terminalEntryAllowed || CurrentState != TerminalExperienceState.CashierView ||
                 inputFieldHasFocus ||
                 !HasRequiredCameraReferences()
             )
@@ -118,7 +121,7 @@ namespace CyberConbini.UI
         public bool RequestReturnToCashier()
         {
             if (
-                CurrentState != TerminalExperienceState.TerminalView ||
+                uiInputBlocked || CurrentState != TerminalExperienceState.TerminalView ||
                 !HasRequiredCameraReferences()
             )
             {
